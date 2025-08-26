@@ -148,7 +148,7 @@ export default function VisaTypesPage() {
                           <div className="flex items-center space-x-4">
                             <div className="text-3xl">{country.flag}</div>
                             <div>
-                              <h3 className="text-xl font-semibold text-gray-900">{country.country}</h3>
+                              <h4 className="font-semibold text-gray-900">{country.country}</h4>
                               <p className="text-sm text-gray-600">
                                 {country.activeCount} active of {country.count} total visa types
                               </p>

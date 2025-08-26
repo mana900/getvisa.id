@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSupabaseAuth } from '@/components/supabase-auth-provider'
 import LoginForm from '@/components/login-form'
 
-export default function LoginPage() {
+function LoginContent() {
   const { user } = useSupabaseAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -23,4 +23,12 @@ export default function LoginPage() {
   }
 
   return <LoginForm redirectTo={redirectTo} />
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  )
 }

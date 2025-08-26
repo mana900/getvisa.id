@@ -15,8 +15,7 @@ const supabase = createClient<Database>(
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userEmail = searchParams.get('userEmail')
+    const userEmail = request.nextUrl.searchParams.get('userEmail')
 
     if (!userEmail) {
       return NextResponse.json(
