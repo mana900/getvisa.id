@@ -18,6 +18,24 @@ export default function VisaDetailPage() {
   const [visa, setVisa] = useState<VisaType | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Helper function to calculate completion date
+  const calculateCompletionDate = (days: string | number) => {
+    if (!days) return null
+    
+    const daysNumber = typeof days === 'string' ? parseInt(days, 10) : days
+    if (isNaN(daysNumber) || daysNumber <= 0) return null
+    
+    const today = new Date()
+    const completionDate = new Date(today)
+    completionDate.setDate(today.getDate() + daysNumber)
+    
+    return completionDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
   // Fetch visa data from database
   useEffect(() => {
     const fetchVisa = async () => {
@@ -120,12 +138,12 @@ export default function VisaDetailPage() {
                 </div>
               )}
 
-              {visa.overview?.guaranteedDate && (
-                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mt-4">
-                  <div className="flex items-center gap-2 text-orange-800">
-                    <Shield className="w-5 h-5" />
+              {visa.overview?.guaranteedDate && calculateCompletionDate(visa.overview.guaranteedDate) && (
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mt-4">
+                  <div className="flex items-center gap-2 text-green-800">
+                    <CheckCircle className="w-5 h-5" />
                     <span className="font-medium">
-                      Guaranteed completion: {visa.overview?.guaranteedDate}
+                      If you apply today, your visa will be ready by: <span className="font-bold text-lg text-green-900">{calculateCompletionDate(visa.overview.guaranteedDate)}</span>
                     </span>
                   </div>
                 </div>

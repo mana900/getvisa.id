@@ -19,6 +19,24 @@ export default function CountryVisaPage() {
   const [countryInfo, setCountryInfo] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+  // Helper function to calculate completion date
+  const calculateCompletionDate = (days: string | number) => {
+    if (!days) return null
+    
+    const daysNumber = typeof days === 'string' ? parseInt(days, 10) : days
+    if (isNaN(daysNumber) || daysNumber <= 0) return null
+    
+    const today = new Date()
+    const completionDate = new Date(today)
+    completionDate.setDate(today.getDate() + daysNumber)
+    
+    return completionDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
   // Fetch visa types for this country from database
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -87,16 +105,17 @@ export default function CountryVisaPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">
-                {countryInfo.country} Visa Types
+                {countryInfo.country} Visa
               </h1>
               <p className="text-gray-600">
-                {countryInfo.activeCount} visa types available
+                {countryInfo.activeCount} visa available
               </p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Visa Cards Section */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Available Visa Types</h2>
@@ -155,6 +174,18 @@ export default function CountryVisaPage() {
                   </div>
                   <span className="font-medium text-gray-900">{visa.validity}</span>
                 </div>
+
+                {visa.overview?.guaranteedDate && calculateCompletionDate(visa.overview.guaranteedDate) && (
+                  <div className="flex items-center justify-between text-sm bg-green-50 p-2 rounded-md border border-green-200">
+                    <div className="flex items-center text-green-700">
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      <span className="text-xs">Ready by</span>
+                    </div>
+                    <span className="font-medium text-green-800 text-xs">
+                      {calculateCompletionDate(visa.overview.guaranteedDate)}
+                    </span>
+                  </div>
+                )}
 
                 {visa.overview?.features?.length > 0 && (
                   <div className="pt-3 border-t border-gray-100">

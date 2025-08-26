@@ -354,13 +354,19 @@ export default function EditVisaPage() {
             </div>
 
             <div>
-              <Label htmlFor="guaranteedDate">Guaranteed Completion Date</Label>
+              <Label htmlFor="guaranteedDate">Guaranteed Completion (Days)</Label>
               <Input
                 id="guaranteedDate"
+                type="number"
                 value={formData.guaranteedDate}
                 onChange={(e) => updateField("guaranteedDate", e.target.value)}
-                placeholder="30 November"
+                placeholder="14"
+                min="1"
+                max="365"
               />
+              <p className="text-sm text-gray-500 mt-1">
+                Number of days from application to completion
+              </p>
             </div>
           </CardContent>
         </Card>
