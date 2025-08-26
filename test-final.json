@@ -1,0 +1,39 @@
+{
+  "country": "United Kingdom",
+  "country_code": "uk",
+  "flag": "🇬🇧",
+  "visa_type": "Standard Visitor Visa",
+  "price": 115,
+  "processing_time": "15-20 business days",
+  "duration": "6 months",
+  "validity": "10 years",
+  "is_active": true,
+  "overview": {
+    "description": "UK Standard Visitor Visa allows you to visit the UK for tourism, business, or to see family and friends.",
+    "features": ["Multiple entry allowed", "Online application", "Biometric appointment required"],
+    "guaranteedDate": "15 December"
+  },
+  "eligibility": [
+    "Valid passport",
+    "Proof of funds to support your stay",
+    "Evidence of accommodation",
+    "Return travel arrangements"
+  ],
+  "timeline": [
+    { "step": "Online Application", "time": "30 minutes", "description": "Complete the online form" },
+    { "step": "Biometric Appointment", "time": "1 day", "description": "Attend biometric appointment" },
+    { "step": "Processing", "time": "15-20 days", "description": "UKVI processes your application" }
+  ],
+  "documents": [
+    "Current passport",
+    "Bank statements",
+    "Employment letter",
+    "Travel itinerary"
+  ],
+  "faqs": [
+    {
+      "question": "How long can I stay?",
+      "answer": "You can stay for up to 6 months on a Standard Visitor Visa."
+    }
+  ]
+}

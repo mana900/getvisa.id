@@ -5,8 +5,10 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { FileText, Upload, User, LogOut, Menu, X, Bell } from "lucide-react"
+import { FileText, Upload, User, LogOut, Menu, X, Bell, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useSupabaseAuth } from "@/components/supabase-auth-provider"
+import ProtectedRoute from "@/components/protected-route"
 
 const navigation = [
   { name: "Documents", href: "/dashboard", icon: Upload },
@@ -18,19 +20,15 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { user, signOut } = useSupabaseAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isSignedIn, setIsSignedIn] = useState(true) // Toggle this for testing
   const pathname = usePathname()
-
-  // Dummy user data
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: null
-  }
+  
+  const isAdmin = user?.user_metadata?.role === 'admin'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
@@ -67,8 +65,18 @@ export default function DashboardLayout({
             })}
           </nav>
           <div className="border-t px-4 py-4">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full mb-2"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Settings className="w-5 h-5" />
+                <span>Admin Panel</span>
+              </Link>
+            )}
             <button 
-              onClick={() => setIsSignedIn(false)}
+              onClick={signOut}
               className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full"
             >
               <LogOut className="w-5 h-5" />
@@ -109,8 +117,17 @@ export default function DashboardLayout({
             })}
           </nav>
           <div className="border-t px-4 py-4">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full mb-2"
+              >
+                <Settings className="w-5 h-5" />
+                <span>Admin Panel</span>
+              </Link>
+            )}
             <button 
-              onClick={() => setIsSignedIn(false)}
+              onClick={signOut}
               className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full"
             >
               <LogOut className="w-5 h-5" />
@@ -131,27 +148,22 @@ export default function DashboardLayout({
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1"></div>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              {isSignedIn ? (
-                <div className="flex items-center space-x-4">
-                  <Bell className="w-5 h-5 text-gray-600" />
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-gray-600" />
-                    </div>
-                    <div className="hidden sm:block">
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
-                    </div>
+              <div className="flex items-center space-x-4">
+                <Bell className="w-5 h-5 text-gray-600" />
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                    <span className="text-orange-600 font-medium text-sm">
+                      {user?.user_metadata?.first_name?.[0]}{user?.user_metadata?.last_name?.[0]}
+                    </span>
+                  </div>
+                  <div className="hidden sm:block">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.user_metadata?.first_name} {user?.user_metadata?.last_name}
+                    </p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
                   </div>
                 </div>
-              ) : (
-                <Button 
-                  onClick={() => setIsSignedIn(true)}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  Sign in
-                </Button>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -162,5 +174,6 @@ export default function DashboardLayout({
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   )
 }

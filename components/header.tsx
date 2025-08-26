@@ -1,9 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Globe, Bell, User } from "lucide-react"
+import { useSupabaseAuth } from "@/components/supabase-auth-provider"
 
 interface HeaderProps {
   onSearchChange?: (filters: {
@@ -14,17 +17,11 @@ interface HeaderProps {
 }
 
 export default function Header({ onSearchChange }: HeaderProps) {
+  const { user, signOut } = useSupabaseAuth()
+  const router = useRouter()
   const [destination, setDestination] = useState("")
   const [passport, setPassport] = useState("")
   const [lengthOfStay, setLengthOfStay] = useState("")
-  const [isSignedIn, setIsSignedIn] = useState(false) // Toggle this for testing
-
-  // Dummy user data
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: null
-  }
 
   const handleDestinationChange = (value: string) => {
     console.log("[v0] Destination selected:", value)
@@ -89,27 +86,38 @@ export default function Header({ onSearchChange }: HeaderProps) {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          {isSignedIn ? (
+          {user ? (
             <>
               <Bell className="w-5 h-5 text-gray-600" />
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-gray-600" />
-                </div>
+                <Link href="/dashboard">
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center cursor-pointer hover:bg-orange-200 transition-colors">
+                    <span className="text-orange-600 font-medium text-sm">
+                      {user.firstName?.[0]}{user.lastName?.[0]}
+                    </span>
+                  </div>
+                </Link>
                 <div className="hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                  <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={signOut}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  Sign out
+                </Button>
               </div>
             </>
           ) : (
-            <a 
-              href="#" 
-              onClick={(e) => {e.preventDefault(); setIsSignedIn(true)}}
-              className="text-gray-700 hover:text-gray-900"
+            <Link 
+              href="/auth/login"
+              className="text-gray-700 hover:text-gray-900 font-medium"
             >
               Sign in
-            </a>
+            </Link>
           )}
         </div>
       </nav>

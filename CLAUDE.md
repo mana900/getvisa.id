@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- **Development server**: `pnpm dev` or `npm run dev` - Starts Next.js development server
-- **Build**: `pnpm build` or `npm run build` - Creates production build
-- **Linting**: `pnpm lint` or `npm run lint` - Runs ESLint (note: disabled during builds)
-- **Start production**: `pnpm start` or `npm run start` - Starts production server
-- **Package manager**: Uses `pnpm` (lock file present) - prefer pnpm over npm when available
+- **Development server**: `npm run dev` - Starts Next.js development server on http://localhost:3000
+- **Build**: `npm run build` - Creates production build
+- **Linting**:  `npm run lint` - Runs ESLint (note: disabled during builds via next.config.mjs)
+- **Start production**: `npm run start` - Starts production server
+- **Install dependencies**: `npm install` - Install all dependencies from package.json
 
 ## Architecture Overview
 
@@ -41,15 +41,30 @@ This is a Next.js 14 visa application platform (GetVisa.ID) built with the App R
 - **TypeScript**: Strict mode enabled with path aliases (@/* for root)
 
 ### Configuration Notes
-- Build settings: ESLint and TypeScript errors are ignored during builds
-- Image optimization is disabled (`unoptimized: true`)
+- Build settings: ESLint and TypeScript errors are ignored during builds (next.config.mjs)
+- Image optimization is disabled (`unoptimized: true`) in next.config.mjs
 - Uses custom Tailwind configuration with shadcn/ui integration
-- Component aliases configured for easy imports (@/components, @/lib, etc.)
+- Component aliases configured for easy imports (@/components, @/lib, etc.) in tsconfig.json
+- shadcn/ui configured with "new-york" style, CSS variables, and Lucide icons
 
 ### Dashboard Features
 - Sidebar navigation with mobile responsive design
 - Applications, Documents, and Profile sections
 - User authentication state (currently mock data)
 - File upload functionality for documents
+
+### Development Workflow
+- Uses **npm** as the package manager (package-lock.json present)
+- Component development follows shadcn/ui patterns with Radix UI primitives
+- Custom components should use the established pattern: functional components with TypeScript
+- State management uses React hooks (no external state library)
+- Mock data is currently used for user authentication (dashboard layout)
+
+### Important Files
+- `next.config.mjs` - Next.js configuration with build optimizations
+- `components.json` - shadcn/ui configuration
+- `app/layout.tsx` - Root layout with Geist font configuration
+- `app/dashboard/layout.tsx` - Dashboard-specific layout with sidebar navigation
+- `lib/utils.ts` - Utility functions (cn function for className merging)
 
 The codebase follows Next.js 14 App Router conventions with a focus on visa application processing and user document management.

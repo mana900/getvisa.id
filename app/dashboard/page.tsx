@@ -2,69 +2,77 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import { useSupabaseAuth } from "@/components/supabase-auth-provider"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { FileText, Download, Trash2, Upload } from "lucide-react"
+import { FileText, Download, Trash2, Upload, AlertCircle } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
-const existingDocuments = [
-  {
-    id: "1",
-    name: "passport-copy.pdf",
-    size: 1024 * 1024 * 2,
-    type: "PDF",
-    status: "approved",
-    category: "passport",
-    uploadDate: "2024-01-20",
-    applicant: "John Doe",
-    application: "UK Tourist Visa",
-  },
-  {
-    id: "2",
-    name: "passport-photo.jpg",
-    size: 1024 * 500,
-    type: "JPG",
-    status: "pending",
-    category: "photo",
-    uploadDate: "2024-01-20",
-    applicant: "John Doe",
-    application: "UK Tourist Visa",
-  },
-  {
-    id: "3",
-    name: "bank-statement.pdf",
-    size: 1024 * 1024 * 3,
-    type: "PDF",
-    status: "rejected",
-    category: "financial",
-    uploadDate: "2024-01-19",
-    applicant: "Jane Smith",
-    application: "US Business Visa",
-  },
-  {
-    id: "4",
-    name: "employment-letter.pdf",
-    size: 1024 * 1024 * 1.5,
-    type: "PDF",
-    status: "approved",
-    category: "employment",
-    uploadDate: "2024-01-18",
-    applicant: "Mike Johnson",
-    application: "Canada Work Visa",
-  },
-]
 
 export default function DashboardPage() {
-  const [documents, setDocuments] = useState(existingDocuments)
+  const { user } = useSupabaseAuth()
+  const { toasts, showToast, removeToast } = useToast()
+  const [documents, setDocuments] = useState<any[]>([])
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<string[]>([])
   const [selectedDocumentType, setSelectedDocumentType] = useState("passport")
+  const [currentApplication, setCurrentApplication] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [deletingDocs, setDeletingDocs] = useState<string[]>([])
 
-  const displayedDocuments = documents.filter((doc) => doc.category === selectedDocumentType)
+  const displayedDocuments = documents
+
+  // Fetch current application and documents on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user?.email) return
+      
+      try {
+        // Fetch current application
+        const appResponse = await fetch(`/api/applications/current?userEmail=${encodeURIComponent(user.email)}`)
+        if (appResponse.ok) {
+          const appData = await appResponse.json()
+          setCurrentApplication(appData.application)
+          setCurrentUser(appData.user)
+        }
+
+        // Fetch user's documents
+        const docsResponse = await fetch(`/api/documents/user?userEmail=${encodeURIComponent(user.email)}`)
+        if (docsResponse.ok) {
+          const docsData = await docsResponse.json()
+          setDocuments(docsData)
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [user?.email])
+
+  // Function to refresh documents list
+  const refreshDocuments = async () => {
+    if (!user?.email) return
+    
+    try {
+      const docsResponse = await fetch(`/api/documents/user?userEmail=${encodeURIComponent(user.email)}`)
+      if (docsResponse.ok) {
+        const docsData = await docsResponse.json()
+        setDocuments(docsData)
+      }
+    } catch (error) {
+      console.error('Failed to refresh documents:', error)
+    }
+  }
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 B"
@@ -93,31 +101,46 @@ export default function DashboardPage() {
     )
   }
 
-  const handleFileSelect = (files: FileList | null) => {
-    if (!files) return
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || !currentApplication || !currentUser) {
+      showToast('Please wait for application to load before uploading files.', 'error')
+      return
+    }
 
-    Array.from(files).forEach((file) => {
-      // Simulate upload process
+    Array.from(files).forEach(async (file) => {
       const fileId = Math.random().toString(36).substr(2, 9)
       setUploadingFiles((prev) => [...prev, fileId])
 
-      // Simulate upload delay
-      setTimeout(() => {
-        const newDoc = {
-          id: fileId,
-          name: file.name,
-          size: file.size,
-          type: file.name.split(".").pop()?.toUpperCase() || "FILE",
-          status: "pending" as const,
-          category: selectedDocumentType,
-          uploadDate: new Date().toISOString().split("T")[0],
-          applicant: "Current User",
-          application: "New Application",
-        }
+      try {
+        // Create FormData for file upload
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('category', selectedDocumentType)
+        formData.append('userId', currentUser.id)
+        formData.append('applicationId', currentApplication.id)
 
-        setDocuments((prev) => [newDoc, ...prev])
+        // Upload file to server
+        const response = await fetch('/api/documents/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const result = await response.json()
+
+        if (response.ok && result.success) {
+          // Refresh documents list from server to get the latest data
+          await refreshDocuments()
+          showToast('File uploaded successfully!', 'success')
+        } else {
+          console.error('Upload failed:', result.error)
+          showToast(`Upload failed: ${result.error}`, 'error')
+        }
+      } catch (error) {
+        console.error('Upload error:', error)
+        showToast('Upload failed: Network error', 'error')
+      } finally {
         setUploadingFiles((prev) => prev.filter((id) => id !== fileId))
-      }, 2000)
+      }
     })
   }
 
@@ -139,6 +162,43 @@ export default function DashboardPage() {
 
   const openFileDialog = () => {
     fileInputRef.current?.click()
+  }
+
+  const handleDeleteDocument = async (doc: any) => {
+    if (!currentUser?.id) return
+    
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${doc.name}"? This action cannot be undone.`)
+    if (!confirmDelete) return
+    
+    setDeletingDocs(prev => [...prev, doc.id])
+    
+    try {
+      const response = await fetch(`/api/documents/${doc.id}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id
+        }),
+      })
+
+      if (response.ok) {
+        // Remove document from local state
+        setDocuments(prev => prev.filter(d => d.id !== doc.id))
+        // Also remove from selected documents if it was selected
+        setSelectedDocuments(prev => prev.filter(id => id !== doc.id))
+        showToast('Document deleted successfully!', 'success')
+      } else {
+        const error = await response.json()
+        showToast(`Failed to delete document: ${error.error}`, 'error')
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error)
+      showToast('Failed to delete document: Network error', 'error')
+    } finally {
+      setDeletingDocs(prev => prev.filter(id => id !== doc.id))
+    }
   }
 
   const documentTypes = [
@@ -238,11 +298,25 @@ export default function DashboardPage() {
                 <th className="text-left p-3 text-sm font-medium text-gray-600">Size</th>
                 <th className="text-left p-3 text-sm font-medium text-gray-600">Uploaded Date</th>
                 <th className="text-left p-3 text-sm font-medium text-gray-600">Type of Document</th>
+                <th className="text-left p-3 text-sm font-medium text-gray-600">Status</th>
                 <th className="w-12 p-3"></th>
               </tr>
             </thead>
             <tbody>
-              {displayedDocuments.map((doc) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center text-gray-500">
+                    Loading documents...
+                  </td>
+                </tr>
+              ) : displayedDocuments.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center text-gray-500">
+                    No documents uploaded yet. Upload your first document above.
+                  </td>
+                </tr>
+              ) : (
+                displayedDocuments.map((doc) => (
                 <tr key={doc.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="p-3">
                     <Checkbox
@@ -255,7 +329,25 @@ export default function DashboardPage() {
                       <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
                         <FileText className="w-4 h-4 text-gray-600" />
                       </div>
-                      <div className="font-medium text-sm">{doc.name}</div>
+                      <button 
+                        className="font-medium text-sm text-blue-600 hover:text-blue-800 hover:underline text-left"
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/documents/${doc.id}/view`)
+                            if (response.ok) {
+                              const data = await response.json()
+                              window.open(data.url, '_blank')
+                            } else {
+                              showToast('Failed to view document', 'error')
+                            }
+                          } catch (error) {
+                            showToast('Failed to view document', 'error')
+                          }
+                        }}
+                        title="Click to view document"
+                      >
+                        {doc.name}
+                      </button>
                     </div>
                   </td>
                   <td className="p-3">
@@ -271,21 +363,81 @@ export default function DashboardPage() {
                     </Badge>
                   </td>
                   <td className="p-3">
+                    <div className="flex items-center space-x-2">
+                      <Badge className={`text-xs ${getStatusBadge(doc.status)}`}>
+                        {doc.status}
+                      </Badge>
+                      {doc.status === 'rejected' && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 w-6 p-0 hover:bg-orange-50"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            const reason = doc.rejectionReason || 'No specific reason provided'
+                            const reviewedAt = doc.reviewedAt ? new Date(doc.reviewedAt).toLocaleString() : 'Unknown'
+                            showToast(`Document: ${doc.name}\n\nREJECTED\n\nReason: ${reason}\n\nReviewed at: ${reviewedAt}\n\nYou can delete this document and upload a new one.`, 'error', 8000)
+                          }}
+                          title="View rejection reason"
+                        >
+                          <AlertCircle className="w-4 h-4 text-orange-600" />
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                  <td className="p-3">
                     <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-600"
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/documents/${doc.id}/view`)
+                            if (response.ok) {
+                              const data = await response.json()
+                              const link = document.createElement('a')
+                              link.href = data.url
+                              link.download = data.filename || doc.name
+                              document.body.appendChild(link)
+                              link.click()
+                              document.body.removeChild(link)
+                            } else {
+                              alert('Failed to download document')
+                            }
+                          } catch (error) {
+                            alert('Failed to download document')
+                          }
+                        }}
+                        title="Download document"
+                      >
                         <Download className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Trash2 className="w-4 h-4" />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                        onClick={() => handleDeleteDocument(doc)}
+                        disabled={deletingDocs.includes(doc.id)}
+                        title="Delete document"
+                      >
+                        {deletingDocs.includes(doc.id) ? (
+                          <AlertCircle className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </Card>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

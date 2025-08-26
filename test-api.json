@@ -1,0 +1,45 @@
+{
+  "country": "Canada",
+  "country_code": "canada",
+  "flag": "🇨🇦",
+  "visa_type": "Business Single Entry",
+  "price": 185,
+  "processing_time": "10-15 business days",
+  "duration": "6 months",
+  "validity": "10 years",
+  "is_active": true,
+  "overview": {
+    "description": "Perfect for business meetings, conferences, and short-term business activities in Canada.",
+    "features": ["Single entry allowed", "Business activities permitted", "Fast processing"],
+    "guaranteedDate": "30 November"
+  },
+  "eligibility": [
+    "Valid passport with 6+ months validity",
+    "Proof of business purpose",
+    "Financial documents",
+    "No criminal record"
+  ],
+  "timeline": [
+    { "step": "Online Application", "time": "30 minutes", "description": "Complete the online application form" },
+    { "step": "Document Review", "time": "5-7 days", "description": "We review your submitted documents" },
+    { "step": "Processing", "time": "3-5 days", "description": "Visa processing by Canadian authorities" },
+    { "step": "Approval", "time": "1-2 days", "description": "Receive your approved visa" }
+  ],
+  "documents": [
+    "Valid passport",
+    "Business invitation letter", 
+    "Financial proof",
+    "Travel itinerary",
+    "Passport photos"
+  ],
+  "faqs": [
+    {
+      "question": "How long is this visa valid?",
+      "answer": "The Business Single Entry visa is valid for 10 years from the date of issue."
+    },
+    {
+      "question": "Can I extend my stay?",
+      "answer": "You can apply for an extension before your current stay expires."
+    }
+  ]
+}
