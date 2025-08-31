@@ -54,12 +54,9 @@ export default function Header({ onSearchChange }: HeaderProps) {
   }
 
   const handleSearch = () => {
-    console.log("[v0] Search triggered with filters:", { destination, passport, lengthOfStay })
-    onSearchChange?.({
-      destination,
-      passport,
-      lengthOfStay,
-    })
+    if (destination) {
+      router.push(`/visa/${destination}`)
+    }
   }
 
   return (
@@ -138,58 +135,28 @@ export default function Header({ onSearchChange }: HeaderProps) {
           <p className="text-lg mb-12 opacity-90">More than 100 countries are now giving out e-visas to travelers.</p>
 
           {/* Search Form */}
-          <div className="bg-white rounded-2xl p-6 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div className="space-y-2">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl mx-auto">
+            <div className="flex gap-4 items-end">
+              <div className="flex-1 space-y-2">
                 <label className="flex items-center text-gray-700 text-sm font-medium">
                   <Globe className="w-4 h-4 mr-2" />
                   Your Destination
                 </label>
                 <Select value={destination} onValueChange={handleDestinationChange}>
                   <SelectTrigger className="bg-gray-50 border-0 w-full text-gray-900">
-                    <SelectValue placeholder="Try 'Japan'" />
+                    <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="japan">Japan</SelectItem>
-                    <SelectItem value="usa">United States</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
                     <SelectItem value="canada">Canada</SelectItem>
-                    <SelectItem value="australia">Australia</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="flex items-center text-gray-700 text-sm font-medium">
-                  <Globe className="w-4 h-4 mr-2" />
-                  Your Passport
-                </label>
-                <Select value={passport} onValueChange={handlePassportChange}>
-                  <SelectTrigger className="bg-gray-50 border-0 w-full text-gray-900">
-                    <SelectValue placeholder="Where are you from?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
+                    <SelectItem value="thailand">Thailand</SelectItem>
                     <SelectItem value="uk">United Kingdom</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="au">Australia</SelectItem>
-                    <SelectItem value="de">Germany</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="flex items-center text-gray-700 text-sm font-medium">
-                  <Globe className="w-4 h-4 mr-2" />
-                  Length of stay
-                </label>
-                <Select value={lengthOfStay} onValueChange={handleLengthChange}>
-                  <SelectTrigger className="bg-gray-50 border-0 w-full text-gray-900">
-                    <SelectValue placeholder="30 days" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="15">15 days</SelectItem>
-                    <SelectItem value="30">30 days</SelectItem>
-                    <SelectItem value="60">60 days</SelectItem>
-                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="usa">United States</SelectItem>
+                    <SelectItem value="australia">Australia</SelectItem>
+                    <SelectItem value="japan">Japan</SelectItem>
+                    <SelectItem value="germany">Germany</SelectItem>
+                    <SelectItem value="france">France</SelectItem>
+                    <SelectItem value="italy">Italy</SelectItem>
+                    <SelectItem value="spain">Spain</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

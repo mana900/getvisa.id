@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { VisaType } from "@/lib/types/database"
 import { VisaService } from "@/lib/services/visa-service"
 import { ArrowLeft, Edit, Trash2, Eye, CheckCircle, FileText, Clock, DollarSign } from "lucide-react"
+import { formatIDR } from "@/lib/utils/currency"
 
 export default function VisaDetailsPage() {
   const router = useRouter()
@@ -156,7 +157,7 @@ export default function VisaDetailsPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Price</p>
-                <p className="text-lg font-bold text-green-600">${visa.price}</p>
+                <p className="text-lg font-bold text-green-600">{formatIDR(visa.price)}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">

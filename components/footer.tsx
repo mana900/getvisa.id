@@ -1,8 +1,24 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Globe, Instagram, Linkedin, Facebook, Twitter } from "lucide-react"
 
 export default function Footer() {
+  const router = useRouter()
+  const [destination, setDestination] = useState("")
+
+  const handleDestinationChange = (value: string) => {
+    setDestination(value)
+  }
+
+  const handleSearch = () => {
+    if (destination) {
+      router.push(`/visa/${destination}`)
+    }
+  }
   return (
     <footer className="bg-gray-100 px-6 py-16">
       <div className="max-w-7xl mx-auto">
@@ -24,20 +40,27 @@ export default function Footer() {
                 <div className="space-y-2">
                   <label className="flex items-center text-white text-sm font-medium">
                     <Globe className="w-4 h-4 mr-2" />
-                    Your Passport
+                    Your Destination
                   </label>
-                  <Select>
+                  <Select value={destination} onValueChange={handleDestinationChange}>
                     <SelectTrigger className="w-64 bg-white/20 border-white/30 text-white">
-                      <SelectValue placeholder="Enter your country" />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="us">United States</SelectItem>
+                      <SelectItem value="canada">Canada</SelectItem>
+                      <SelectItem value="thailand">Thailand</SelectItem>
                       <SelectItem value="uk">United Kingdom</SelectItem>
-                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="usa">United States</SelectItem>
+                      <SelectItem value="australia">Australia</SelectItem>
+                      <SelectItem value="japan">Japan</SelectItem>
+                      <SelectItem value="germany">Germany</SelectItem>
+                      <SelectItem value="france">France</SelectItem>
+                      <SelectItem value="italy">Italy</SelectItem>
+                      <SelectItem value="spain">Spain</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="bg-black hover:bg-gray-800 text-white h-12 px-8 mt-6">
+                <Button onClick={handleSearch} className="bg-black hover:bg-gray-800 text-white h-12 px-8 mt-6">
                   <Search className="w-5 h-5 mr-2" />
                   Find e-visa
                 </Button>

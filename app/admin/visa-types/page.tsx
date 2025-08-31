@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { VisaService } from "@/lib/services/visa-service"
 import { Search, Plus, Edit, Trash2, Eye, ChevronDown, ChevronRight } from "lucide-react"
+import { formatIDR } from "@/lib/utils/currency"
 
 export default function VisaTypesPage() {
   const [allVisaTypes, setAllVisaTypes] = useState<any[]>([])
@@ -195,7 +196,7 @@ export default function VisaTypesPage() {
                                 <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
                                   <div>
                                     <p className="text-gray-600">Price</p>
-                                    <p className="font-semibold text-green-600">${visa.price}</p>
+                                    <p className="font-semibold text-green-600">{formatIDR(visa.price)}</p>
                                   </div>
                                   <div>
                                     <p className="text-gray-600">Processing</p>

@@ -57,7 +57,11 @@ export class AuthService {
 
     if (error) {
       console.error('Error signing out:', error)
-      throw new Error(error.message)
+      // Don't throw error if there's no session to sign out from
+      if (error.message !== 'Auth session missing!') {
+        throw new Error(error.message)
+      }
+      // If session is missing, user is already signed out, so continue silently
     }
   }
 

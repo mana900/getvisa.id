@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { VisaService } from "@/lib/services/visa-service"
 import type { VisaType } from "@/lib/types/database"
+import { formatIDR } from "@/lib/utils/currency"
 
 export default function VisaDetailPage() {
   const params = useParams()
@@ -108,7 +109,7 @@ export default function VisaDetailPage() {
                   <Calendar className="w-4 h-4" />
                   {visa.duration}
                 </div>
-                <div className="text-2xl font-bold text-green-600">${visa.price}</div>
+                <div className="text-2xl font-bold text-green-600">{formatIDR(visa.price)}</div>
               </div>
             </div>
           </div>
@@ -217,7 +218,7 @@ export default function VisaDetailPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-8">
               <div className="text-center mb-6">
-                <div className="text-3xl font-bold text-green-600 mb-2">${visa.price}</div>
+                <div className="text-3xl font-bold text-green-600 mb-2">{formatIDR(visa.price)}</div>
                 <div className="text-gray-500 mb-4">Processing time: {visa.processing_time}</div>
                 <button className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors">
                   Apply Now

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { VisaService } from "@/lib/services/visa-service"
 import type { VisaType } from "@/lib/types/database"
+import { formatIDR } from "@/lib/utils/currency"
 
 export default function CountryVisaPage() {
   const params = useParams()
@@ -108,7 +109,7 @@ export default function CountryVisaPage() {
                 {countryInfo.country} Visa
               </h1>
               <p className="text-gray-600">
-                {countryInfo.activeCount} visa available
+                {countryInfo.activeCount} available
               </p>
             </div>
           </div>
@@ -117,11 +118,6 @@ export default function CountryVisaPage() {
 
       {/* Visa Cards Section */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Available Visa Types</h2>
-          <p className="text-gray-600">Choose the visa type that best matches your travel purpose.</p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {countryVisas.map((visa) => (
             <div
@@ -142,7 +138,7 @@ export default function CountryVisaPage() {
 
                 <div className="flex items-start justify-between mb-3">
                   <h4 className="text-sm font-medium text-gray-900 leading-tight">{visa.visa_type}</h4>
-                  <span className="text-lg font-bold text-green-600 ml-2">${visa.price}</span>
+                  <span className="text-lg font-bold text-green-600 ml-2">{formatIDR(visa.price)}</span>
                 </div>
 
                 <p className="text-gray-600 text-xs leading-relaxed mb-4 line-clamp-3">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Clock, Calendar, FileText, CheckCircle } from "lucide-react"
 import { VisaType } from "@/lib/types/database"
+import { formatIDR } from "@/lib/utils/currency"
 
 
 interface VisaOptionsProps {
@@ -132,7 +133,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
 
                     <div className="flex items-start justify-between mb-3">
                       <h4 className="text-sm font-medium text-gray-900 leading-tight">{visa.visa_type}</h4>
-                      <span className="text-lg font-bold text-green-600 ml-2">${visa.price}</span>
+                      <span className="text-lg font-bold text-green-600 ml-2">{formatIDR(visa.price)}</span>
                     </div>
 
                     <p className="text-gray-600 text-xs leading-relaxed mb-4 line-clamp-3">
