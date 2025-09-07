@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { FileText, Upload, User, LogOut, Menu, X, Bell, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -34,11 +35,14 @@ export default function DashboardLayout({
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4 border-b">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
-              </div>
-              <span className="font-semibold text-gray-900">getvisa.id</span>
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/TextLogo-GreenCropped.png" 
+                alt="GetVisa.ID Logo" 
+                width={120} 
+                height={35}
+                className="h-7 w-auto"
+              />
             </Link>
             <button onClick={() => setSidebarOpen(false)}>
               <X className="w-6 h-6 text-gray-400" />
@@ -90,11 +94,14 @@ export default function DashboardLayout({
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4 border-b">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
-              </div>
-              <span className="font-semibold text-gray-900">getvisa.id</span>
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/TextLogo-GreenCropped.png" 
+                alt="GetVisa.ID Logo" 
+                width={120} 
+                height={35}
+                className="h-7 w-auto"
+              />
             </Link>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">

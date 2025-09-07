@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -64,11 +65,14 @@ export default function Header({ onSearchChange }: HeaderProps) {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between p-6 bg-white">
         <div className="flex items-center space-x-8">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-              <Globe className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-semibold">getvisa.id</span>
+          <Link href="/" className="flex items-center">
+            <Image 
+              src="/TextLogo-GreenCropped.png" 
+              alt="GetVisa.ID Logo" 
+              width={140} 
+              height={40}
+              className="h-8 w-auto"
+            />
           </Link>
           <div className="hidden md:flex space-x-6">
             <Link href="/countries" className="text-gray-700 hover:text-gray-900">

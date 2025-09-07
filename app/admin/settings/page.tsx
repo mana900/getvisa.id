@@ -66,22 +66,29 @@ export default function AdminSettingsPage() {
       
       // Save WhatsApp settings to database
       if (settings.whatsappNumber) {
+        console.log("Saving WhatsApp number:", settings.whatsappNumber)
         await SettingsService.setWhatsAppNumber(settings.whatsappNumber)
+        console.log("WhatsApp number saved successfully")
       }
       
       if (settings.whatsappMessageTemplate) {
+        console.log("Saving message template:", settings.whatsappMessageTemplate)
         await SettingsService.updateSetting(
           'whatsapp_message_template',
           settings.whatsappMessageTemplate,
           'WhatsApp message template for visa consultations'
         )
+        console.log("Message template saved successfully")
       }
       
       // In a real app, this would save other settings to the backend too
       alert("Settings saved successfully!")
     } catch (error) {
-      console.error('Error saving settings:', error)
-      alert("Error saving settings. Please try again.")
+      console.error('Detailed error saving settings:', error)
+      
+      // Show more specific error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      alert(`Error saving settings: ${errorMessage}\n\nPlease check the console for more details.`)
     }
   }
 
