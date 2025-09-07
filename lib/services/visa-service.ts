@@ -126,12 +126,17 @@ export class VisaService {
 
   // Delete visa type
   static async deleteVisaType(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('visa_types')
-      .delete()
-      .eq('id', id)
-
-    if (error) {
+    try {
+      const response = await fetch(`/api/admin/visa-types/${id}`, {
+        method: 'DELETE',
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete visa type')
+      }
+    } catch (error) {
       console.error('Error deleting visa type:', error)
       throw new Error('Failed to delete visa type')
     }

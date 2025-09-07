@@ -4,6 +4,7 @@ import { useState } from "react"
 import Header from "@/components/header"
 import PartnerLogos from "@/components/partner-logos"
 import PopularDestinations from "@/components/popular-destinations"
+import Testimonials from "@/components/testimonials"
 import Footer from "@/components/footer"
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
       <Header onSearchChange={setSearchFilters} />
       <PartnerLogos />
       <PopularDestinations searchFilters={searchFilters} />
+      <Testimonials />
       <Footer />
     </main>
   )

@@ -125,11 +125,11 @@ export default function Header({ onSearchChange }: HeaderProps) {
         <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
         <div className="relative z-10 px-12 py-32 text-center text-white">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Simplifying world travel
+            Simplifying visas for
             <br />
-            modernizing your visa
+            Indonesians Everywhere
           </h1>
-          <p className="text-lg mb-12 opacity-90">More than 100 countries are now giving out e-visas to travelers.</p>
+          <p className="text-lg mb-12 opacity-90">Fast, reliable, and hassle-free visa services for 100+ destinations.</p>
 
           {/* Search Form */}
           <div className="bg-white rounded-2xl p-6 max-w-2xl mx-auto">
@@ -159,7 +159,7 @@ export default function Header({ onSearchChange }: HeaderProps) {
               </div>
               <Button onClick={handleSearch} className="bg-black hover:bg-gray-800 text-white h-12 px-8">
                 <Search className="w-5 h-5 mr-2" />
-                Find e-visa
+                Find visa
               </Button>
             </div>
           </div>

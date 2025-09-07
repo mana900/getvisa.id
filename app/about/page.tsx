@@ -16,21 +16,15 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <h1 className="text-6xl md:text-7xl text-gray-900 leading-tight mb-8">
-                Visa Makers,
-                Passion Behind Every Adventure
+                Unlock the World
+                Hassle-Free 
               </h1>
             </div>
             <div className="flex flex-col justify-center">
               <p className="text-xl text-gray-700 leading-relaxed mb-8">
-                We're more than a visa service—we're storytellers, explorers, and experience 
-                creators, dedicated to making every trip unforgettable.
+Getting a visa shouldn’t feel like cracking a code. That’s why we built GetVisa.ID by Travion—a modern visa concierge service designed to make travel simple, stress-free, and fast.<br/><br/>
+We know the struggle: endless forms, confusing requirements, embassy queues, and that one missing document that throws everything off. We’re here to cut through the noise and handle it all for you—so your only job is to plan where you’ll go next.
               </p>
-              <div className="flex items-center text-green-700 font-semibold">
-                <span className="mr-2">Discover Our Story</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
             </div>
           </div>
         </div>
@@ -74,28 +68,30 @@ export default function AboutPage() {
             </div>
             <div className="lg:col-span-10">
               <h2 className="text-4xl md:text-5xl text-gray-900 leading-tight mb-16">
-                Established in 2018, our journey started with a passion for meaningful travel. Over the years, 
-                we've grown into a trusted partner, we excel in personalized visa services that blend 
-                adventure, comfort, and discovery.
+Founded in 2017 under Travion | Travel & Beyond, we’ve always believed travel should be about discovery, not documents. After years of helping Indonesians plan their trips, we saw one thing holding people back: the visa process.
+
+That’s why we created GetVisa.id
+
+
               </h2>
               
               {/* Statistics Grid */}
               <div className="grid grid-cols-2 gap-12 mt-20">
                 <div>
-                  <div className="text-7xl md:text-8xl text-green-700 mb-2">98%</div>
-                  <div className="text-lg text-gray-600">Satisfaction Rate</div>
+                  <div className="text-7xl md:text-8xl text-green-700 mb-2">99%</div>
+                  <div className="text-lg text-gray-600">Approval Success Rate</div>
                 </div>
                 <div>
                   <div className="text-7xl md:text-8xl text-green-700 mb-2">1500+</div>
-                  <div className="text-lg text-gray-600">Satisfied Client Reviews</div>
+                  <div className="text-lg text-gray-600">Visas Processed</div>
                 </div>
                 <div>
-                  <div className="text-7xl md:text-8xl text-green-700 mb-2">15+</div>
+                  <div className="text-7xl md:text-8xl text-green-700 mb-2">7+</div>
                   <div className="text-lg text-gray-600">Years of our Expertise</div>
                 </div>
                 <div>
-                  <div className="text-7xl md:text-8xl text-green-700 mb-2">800+</div>
-                  <div className="text-lg text-gray-600">Guided Tours Annually</div>
+                  <div className="text-7xl md:text-8xl text-green-700 mb-2">100+</div>
+                  <div className="text-lg text-gray-600">Destinations Covered</div>
                 </div>
               </div>
             </div>
@@ -117,13 +113,11 @@ export default function AboutPage() {
             
             <div className="bg-white rounded-3xl p-8 lg:p-12">
               <div className="mb-8">
-                <p className="text-sm text-gray-600 font-medium mb-4">Required Amenities</p>
                 <h2 className="text-4xl md:text-5xl text-gray-900 leading-tight mb-6">
-                  Unmatched Comfort, Every Step of Journey
+                  What Makes Us Different
                 </h2>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  We take care of every detail so you can focus on the adventure. Travel with confidence
-                  —explore with ease.
+                  We don't just process papers—we give you clarity, speed, and confidence. Every application is handled with care, so you never have to second-guess.
                 </p>
               </div>
 
@@ -131,15 +125,13 @@ export default function AboutPage() {
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
                     <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl  text-gray-900 mb-2">High-Quality Equipment</h3>
+                    <h3 className="text-xl text-gray-900 mb-2">Clear Guidance</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      We provide all the gear you need—snorkeling, trekking, or camping—so you're 
-                      always prepared.
+                      No confusing forms. We simplify every step in plain language for Indonesians.
                     </p>
                   </div>
                 </div>
@@ -147,14 +139,13 @@ export default function AboutPage() {
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
                     <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl  text-gray-900 mb-2">Personal Documentation</h3>
+                    <h3 className="text-xl text-gray-900 mb-2">End-to-End Support</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Capture every special moment with the help of our professional photographers.
+                      From document checks to embassy appointments, we've got you covered.
                     </p>
                   </div>
                 </div>
@@ -166,10 +157,9 @@ export default function AboutPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-xl  text-gray-900 mb-2">Comprehensive Insurance</h3>
+                    <h3 className="text-xl text-gray-900 mb-2">Trusted Expertise</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      We provide full travel insurance coverage to ensure your peace of mind 
-                      throughout your journey.
+                      With years of travel industry experience, we know what embassies look for.
                     </p>
                   </div>
                 </div>

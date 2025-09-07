@@ -85,6 +85,23 @@ export default function VisaTypesPage() {
     }
   }
 
+  const deleteVisaType = async (id: string, visaType: string, country: string) => {
+    const confirmDelete = confirm(
+      `Are you sure you want to delete the "${visaType}" visa for ${country}?\n\nThis action cannot be undone.`
+    )
+    
+    if (!confirmDelete) return
+
+    try {
+      await VisaService.deleteVisaType(id)
+      setAllVisaTypes(prev => prev.filter(v => v.id !== id))
+      alert('Visa type deleted successfully')
+    } catch (error) {
+      console.error('Error deleting visa type:', error)
+      alert('Error deleting visa type. Please try again.')
+    }
+  }
+
   const toggleCountryExpansion = (countryCode: string) => {
     setExpandedCountries(prev => 
       prev.includes(countryCode)
@@ -226,7 +243,12 @@ export default function VisaTypesPage() {
                                         Edit
                                       </Button>
                                     </Link>
-                                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:border-red-300">
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      className="text-red-600 hover:text-red-700 hover:border-red-300"
+                                      onClick={() => deleteVisaType(visa.id, visa.visa_type, visa.country)}
+                                    >
                                       <Trash2 className="w-3 h-3 mr-1" />
                                       Delete
                                     </Button>
