@@ -7,6 +7,7 @@ import { ArrowLeft, Clock, Calendar, FileText, Shield, CheckCircle } from "lucid
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { VisaService } from "@/lib/services/visa-service"
+import { SettingsService } from "@/lib/services/settings-service"
 import type { VisaType } from "@/lib/types/database"
 import { formatIDR } from "@/lib/utils/currency"
 
@@ -17,6 +18,8 @@ export default function VisaDetailPage() {
   const visaId = params.id as string
 
   const [visa, setVisa] = useState<VisaType | null>(null)
+  const [whatsappNumber, setWhatsappNumber] = useState<string>("")
+  const [messageTemplate, setMessageTemplate] = useState<string>("")
   const [loading, setLoading] = useState(true)
 
   // Helper function to calculate completion date
@@ -37,15 +40,22 @@ export default function VisaDetailPage() {
     })
   }
 
-  // Fetch visa data from database
+  // Fetch visa data and settings from database
   useEffect(() => {
-    const fetchVisa = async () => {
+    const fetchData = async () => {
       try {
-        const visaData = await VisaService.getVisaById(visaId)
+        const [visaData, whatsappNum, msgTemplate] = await Promise.all([
+          VisaService.getVisaById(visaId),
+          SettingsService.getWhatsAppNumber(),
+          SettingsService.getWhatsAppMessageTemplate()
+        ])
+        
         console.log('Fetched visa data:', visaData)
         setVisa(visaData)
+        setWhatsappNumber(whatsappNum)
+        setMessageTemplate(msgTemplate)
       } catch (error) {
-        console.error('Error fetching visa:', error)
+        console.error('Error fetching data:', error)
         setVisa(null)
       } finally {
         setLoading(false)
@@ -53,7 +63,7 @@ export default function VisaDetailPage() {
     }
 
     if (visaId) {
-      fetchVisa()
+      fetchData()
     }
   }, [visaId])
 
@@ -220,9 +230,17 @@ export default function VisaDetailPage() {
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-green-600 mb-2">{formatIDR(visa.price)}</div>
                 <div className="text-gray-500 mb-4">Processing time: {visa.processing_time}</div>
-                <button className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                <button className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3">
                   Apply Now
                 </button>
+                <a 
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageTemplate.replace('{countryName}', visa.country).replace('{visaType}', visa.visa_type))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 transition-colors block text-center"
+                >
+                  Contact Consultant
+                </a>
               </div>
 
               <div className="space-y-4 text-sm">

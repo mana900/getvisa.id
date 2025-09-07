@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Bell, Shield, Globe, Save } from "lucide-react"
+import { Bell, Shield, Globe, Save, Settings } from "lucide-react"
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({

@@ -151,6 +151,32 @@ export interface Database {
           uploaded_at?: string
         }
       }
+      settings: {
+        Row: {
+          id: string
+          key: string
+          value: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          value: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          value?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
@@ -179,3 +205,7 @@ export type VisaApplicationUpdate = Database['public']['Tables']['visa_applicati
 export type Document = Database['public']['Tables']['documents']['Row']
 export type DocumentInsert = Database['public']['Tables']['documents']['Insert']
 export type DocumentUpdate = Database['public']['Tables']['documents']['Update']
+
+export type Setting = Database['public']['Tables']['settings']['Row']
+export type SettingInsert = Database['public']['Tables']['settings']['Insert']
+export type SettingUpdate = Database['public']['Tables']['settings']['Update']

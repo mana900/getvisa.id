@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Save, Mail, Globe, Shield } from "lucide-react"
+import { Save, Mail, Globe, Shield, MessageCircle } from "lucide-react"
+import { SettingsService } from "@/lib/services/settings-service"
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
@@ -26,17 +27,62 @@ export default function AdminSettingsPage() {
     smtpServer: "",
     smtpPort: "587",
     smtpUsername: "",
-    smtpPassword: ""
+    smtpPassword: "",
+    whatsappNumber: "",
+    whatsappMessageTemplate: "I'd like to apply for Visa - ({countryName}) - ({visaType}) - "
   })
+
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadWhatsAppSettings()
+  }, [])
+
+  const loadWhatsAppSettings = async () => {
+    try {
+      setLoading(true)
+      const whatsappNumber = await SettingsService.getWhatsAppNumber()
+      const messageTemplate = await SettingsService.getSetting('whatsapp_message_template')
+      
+      setSettings(prev => ({
+        ...prev,
+        whatsappNumber,
+        whatsappMessageTemplate: messageTemplate || "I'd like to apply for Visa - ({countryName}) - ({visaType}) - "
+      }))
+    } catch (error) {
+      console.error('Error loading WhatsApp settings:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const updateSetting = (key: string, value: string | boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleSave = () => {
-    console.log("Saving settings:", settings)
-    // In a real app, this would save to the backend
-    alert("Settings saved successfully!")
+  const handleSave = async () => {
+    try {
+      console.log("Saving settings:", settings)
+      
+      // Save WhatsApp settings to database
+      if (settings.whatsappNumber) {
+        await SettingsService.setWhatsAppNumber(settings.whatsappNumber)
+      }
+      
+      if (settings.whatsappMessageTemplate) {
+        await SettingsService.updateSetting(
+          'whatsapp_message_template',
+          settings.whatsappMessageTemplate,
+          'WhatsApp message template for visa consultations'
+        )
+      }
+      
+      // In a real app, this would save other settings to the backend too
+      alert("Settings saved successfully!")
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      alert("Error saving settings. Please try again.")
+    }
   }
 
   return (
@@ -154,6 +200,51 @@ export default function AdminSettingsPage() {
                 onChange={(e) => updateSetting("smtpPassword", e.target.value)}
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* WhatsApp Configuration */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-green-600" />
+            WhatsApp Configuration
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+              <Input
+                id="whatsappNumber"
+                value={settings.whatsappNumber}
+                onChange={(e) => updateSetting("whatsappNumber", e.target.value)}
+                placeholder="1234567890"
+              />
+              <p className="text-sm text-gray-600 mt-1">
+                Enter the phone number without country code prefix (e.g., 1234567890)
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="messageTemplate">Message Template</Label>
+              <Textarea
+                id="messageTemplate"
+                value={settings.whatsappMessageTemplate}
+                onChange={(e) => updateSetting("whatsappMessageTemplate", e.target.value)}
+                placeholder="I'd like to apply for Visa - ({countryName}) - ({visaType}) - "
+                rows={3}
+              />
+              <p className="text-sm text-gray-600 mt-1">
+                Use {"{countryName}"} and {"{visaType}"} as placeholders
+              </p>
+            </div>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h4 className="font-medium text-green-800 mb-2">Preview</h4>
+            <p className="text-sm text-green-700">
+              Example message: "{settings.whatsappMessageTemplate.replace('{countryName}', 'United States').replace('{visaType}', 'Tourist Visa')}"
+            </p>
           </div>
         </CardContent>
       </Card>

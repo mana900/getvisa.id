@@ -64,22 +64,19 @@ export default function Header({ onSearchChange }: HeaderProps) {
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between p-6 bg-white">
         <div className="flex items-center space-x-8">
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
               <Globe className="w-4 h-4 text-white" />
             </div>
             <span className="text-xl font-semibold">getvisa.id</span>
-          </div>
+          </Link>
           <div className="hidden md:flex space-x-6">
-            <a href="#" className="text-gray-700 hover:text-gray-900">
-              Find E-visa
-            </a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">
-              Passports
-            </a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">
-              Destinations
-            </a>
+            <Link href="/countries" className="text-gray-700 hover:text-gray-900">
+              Countries
+            </Link>
+            <Link href="/about" className="text-gray-700 hover:text-gray-900">
+              About
+            </Link>
           </div>
         </div>
         <div className="flex items-center space-x-4">
