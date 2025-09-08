@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { VisaService } from "@/lib/services/visa-service"
 import type { VisaType } from "@/lib/types/database"
 import { formatIDR } from "@/lib/utils/currency"
+import { trackVisaCardClick, trackBackButtonClick } from "@/lib/gtag"
+import VisaPageAnalytics from "@/components/VisaPageAnalytics"
 
 export default function CountryVisaPage() {
   const params = useParams()
@@ -92,10 +94,23 @@ export default function CountryVisaPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Analytics Tracking */}
+      <VisaPageAnalytics 
+        country={countryInfo?.countryName || country} 
+        pageType="country_listing" 
+      />
+      
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <Button variant="ghost" onClick={() => router.push("/")} className="mb-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => {
+              trackBackButtonClick('country_page', 'home')
+              router.push("/")
+            }} 
+            className="mb-4"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to home
           </Button>
@@ -123,7 +138,10 @@ export default function CountryVisaPage() {
             <div
               key={visa.id}
               className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer"
-              onClick={() => router.push(`/visa/${country}/${visa.id}`)}
+              onClick={() => {
+                trackVisaCardClick(visa.country, visa.visa_type, 'country_page')
+                router.push(`/visa/${country}/${visa.id}`)
+              }}
             >
               <div className="p-6 pb-4">
                 <div className="flex items-center space-x-3 mb-4">
@@ -203,6 +221,7 @@ export default function CountryVisaPage() {
                   className="w-full mt-4 bg-black text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
+                    trackVisaCardClick(visa.country, visa.visa_type, 'country_page')
                     router.push(`/visa/${country}/${visa.id}`)
                   }}
                 >

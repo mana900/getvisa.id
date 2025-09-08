@@ -80,3 +80,95 @@ export const trackContactSubmit = () => {
     category: 'lead_generation',
   })
 }
+
+// Enhanced visa detail page tracking
+export const trackVisaDetailView = (country: string, visaType: string, price: number) => {
+  event({
+    action: 'view_visa_details',
+    category: 'visa_application',
+    label: `${country}:${visaType}`,
+    value: price,
+  })
+}
+
+export const trackApplyNowClick = (country: string, visaType: string, price: number) => {
+  event({
+    action: 'click_apply_now',
+    category: 'conversion',
+    label: `${country}:${visaType}`,
+    value: price,
+  })
+}
+
+export const trackContactConsultantClick = (country: string, visaType: string, method: 'whatsapp' | 'phone' | 'email' = 'whatsapp') => {
+  event({
+    action: 'contact_consultant',
+    category: 'lead_generation',
+    label: `${country}:${visaType}:${method}`,
+  })
+}
+
+export const trackPriceView = (country: string, visaType: string, price: number) => {
+  event({
+    action: 'view_price',
+    category: 'pricing',
+    label: `${country}:${visaType}`,
+    value: price,
+  })
+}
+
+export const trackProcessingTimeView = (country: string, visaType: string, processingTime: string) => {
+  event({
+    action: 'view_processing_time',
+    category: 'visa_information',
+    label: `${country}:${visaType}:${processingTime}`,
+  })
+}
+
+export const trackRequirementsView = (country: string, visaType: string, section: string) => {
+  event({
+    action: 'view_requirements',
+    category: 'visa_information',
+    label: `${country}:${visaType}:${section}`,
+  })
+}
+
+export const trackVisaCardClick = (country: string, visaType: string, source: 'country_page' | 'home_page' | 'search_results') => {
+  event({
+    action: 'click_visa_card',
+    category: 'navigation',
+    label: `${country}:${visaType}`,
+  })
+}
+
+export const trackGuaranteedDateView = (country: string, visaType: string, guaranteedDate: string) => {
+  event({
+    action: 'view_guaranteed_date',
+    category: 'visa_information',
+    label: `${country}:${visaType}:${guaranteedDate}`,
+  })
+}
+
+export const trackFeatureClick = (country: string, visaType: string, feature: string) => {
+  event({
+    action: 'click_feature',
+    category: 'visa_information',
+    label: `${country}:${visaType}:${feature}`,
+  })
+}
+
+export const trackBackButtonClick = (from: string, to: string) => {
+  event({
+    action: 'click_back_button',
+    category: 'navigation',
+    label: `${from}_to_${to}`,
+  })
+}
+
+export const trackWhatsAppMessageSent = (country: string, visaType: string) => {
+  event({
+    action: 'whatsapp_message_sent',
+    category: 'lead_generation',
+    label: `${country}:${visaType}`,
+  })
+}

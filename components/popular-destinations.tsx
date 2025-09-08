@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Clock, Calendar, FileText, CheckCircle } from "lucide-react"
 import { VisaType } from "@/lib/types/database"
 import { formatIDR } from "@/lib/utils/currency"
-import { trackApplicationStart } from "@/lib/gtag"
+import { trackApplicationStart, trackVisaCardClick } from "@/lib/gtag"
 
 
 interface VisaOptionsProps {
@@ -70,9 +70,12 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
     setDisplayedVisas(8) // Reset display count when filters change
   }, [searchFilters, allVisaOptions])
 
-  const handleCardClick = (countryCode: string) => {
-    // Track visa application start in Google Analytics
+  const handleCardClick = (countryCode: string, visaType?: string) => {
+    // Track visa application start and card click in Google Analytics
     trackApplicationStart(countryCode)
+    if (visaType) {
+      trackVisaCardClick(countryCode, visaType, 'home_page')
+    }
     router.push(`/visa/${countryCode}`)
   }
 
@@ -121,7 +124,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                 <div
                   key={visa.id}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer"
-                  onClick={() => handleCardClick(visa.country_code)}
+                  onClick={() => handleCardClick(visa.country_code, visa.visa_type)}
                 >
                   <div className="p-6 pb-4">
                     <div className="flex items-center space-x-3 mb-4">
@@ -198,7 +201,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                       className="w-full mt-4 bg-black text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleCardClick(visa.country_code)
+                        handleCardClick(visa.country_code, visa.visa_type)
                       }}
                     >
                       Apply Now

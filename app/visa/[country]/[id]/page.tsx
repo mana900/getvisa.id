@@ -10,6 +10,16 @@ import { VisaService } from "@/lib/services/visa-service"
 import { SettingsService } from "@/lib/services/settings-service"
 import type { VisaType } from "@/lib/types/database"
 import { formatIDR } from "@/lib/utils/currency"
+import { 
+  trackVisaDetailView, 
+  trackApplyNowClick, 
+  trackContactConsultantClick, 
+  trackPriceView,
+  trackProcessingTimeView,
+  trackBackButtonClick,
+  trackWhatsAppMessageSent
+} from "@/lib/gtag"
+import VisaPageAnalytics from "@/components/VisaPageAnalytics"
 
 export default function VisaDetailPage() {
   const params = useParams()
@@ -54,6 +64,13 @@ export default function VisaDetailPage() {
         setVisa(visaData)
         setWhatsappNumber(whatsappNum)
         setMessageTemplate(msgTemplate)
+        
+        // Track visa detail view
+        if (visaData) {
+          trackVisaDetailView(visaData.country, visaData.visa_type, visaData.price)
+          trackPriceView(visaData.country, visaData.visa_type, visaData.price)
+          trackProcessingTimeView(visaData.country, visaData.visa_type, visaData.processing_time)
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
         setVisa(null)
@@ -92,11 +109,24 @@ export default function VisaDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Analytics Tracking */}
+      <VisaPageAnalytics 
+        country={visa.country}
+        visaType={visa.visa_type}
+        price={visa.price}
+        processingTime={visa.processing_time}
+        pageType="visa_detail" 
+      />
+      
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <Link href={`/visa/${country}`}>
-            <Button variant="ghost" className="mb-4">
+            <Button 
+              variant="ghost" 
+              className="mb-4"
+              onClick={() => trackBackButtonClick('visa_detail', 'country_page')}
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to {visa.country} visas
             </Button>
@@ -230,7 +260,10 @@ export default function VisaDetailPage() {
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-green-600 mb-2">{formatIDR(visa.price)}</div>
                 <div className="text-gray-500 mb-4">Processing time: {visa.processing_time}</div>
-                <button className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3">
+                <button 
+                  className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3"
+                  onClick={() => trackApplyNowClick(visa.country, visa.visa_type, visa.price)}
+                >
                   Apply Now
                 </button>
                 <a 
@@ -238,6 +271,10 @@ export default function VisaDetailPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 transition-colors block text-center"
+                  onClick={() => {
+                    trackContactConsultantClick(visa.country, visa.visa_type, 'whatsapp')
+                    trackWhatsAppMessageSent(visa.country, visa.visa_type)
+                  }}
                 >
                   Contact Consultant
                 </a>
