@@ -36,22 +36,22 @@ We know the struggle: endless forms, confusing requirements, embassy queues, and
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="rounded-2xl overflow-hidden h-96">
               <img 
-                src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=600&fit=crop&crop=entropy&auto=format" 
-                alt="Travelers exploring ancient ruins"
+                src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=600&fit=crop&crop=entropy&auto=format" 
+                alt="Modern city skyline representing international destinations"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="rounded-2xl overflow-hidden h-96">
               <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&crop=entropy&auto=format" 
-                alt="Couple enjoying sunset view"
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop&crop=entropy&auto=format" 
+                alt="Scenic mountain landscape perfect for travel content"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="rounded-2xl overflow-hidden h-96">
               <img 
-                src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=400&h=600&fit=crop&crop=entropy&auto=format" 
-                alt="Adventure through stone archway"
+                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=600&fit=crop&crop=entropy&auto=format" 
+                alt="Paradise beach destination for visa travel"
                 className="w-full h-full object-cover"
               />
             </div>
