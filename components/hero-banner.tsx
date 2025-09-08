@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Globe } from "lucide-react"
+import { trackVisaSearch } from "@/lib/gtag"
 
 interface HeroBannerProps {
   onSearchChange?: (filters: {
@@ -52,6 +53,8 @@ export default function HeroBanner({ onSearchChange }: HeroBannerProps) {
 
   const handleSearch = () => {
     if (destination) {
+      // Track visa search in Google Analytics
+      trackVisaSearch(destination)
       router.push(`/visa/${destination}`)
     }
   }

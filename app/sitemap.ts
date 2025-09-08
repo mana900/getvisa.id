@@ -31,7 +31,7 @@ async function getVisaTypes() {
     const { supabase } = await import('@/lib/supabase')
     const { data: visaTypes, error } = await supabase
       .from('visa_types')
-      .select('country_code, country_name, updated_at')
+      .select('country_code, updated_at')
       .order('country_code')
 
     if (error) {

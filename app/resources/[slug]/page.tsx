@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
+import BlogAnalytics from '@/components/BlogAnalytics'
 import { ArrowLeft, Calendar, Clock, Share2, MessageCircle } from 'lucide-react'
 
 interface BlogPost {
@@ -159,6 +160,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
+      
+      {/* Blog Analytics Tracking */}
+      <BlogAnalytics slug={post.slug} category={post.category} title={post.title} />
       
       {/* Structured Data */}
       <script

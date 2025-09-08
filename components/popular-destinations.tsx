@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Clock, Calendar, FileText, CheckCircle } from "lucide-react"
 import { VisaType } from "@/lib/types/database"
 import { formatIDR } from "@/lib/utils/currency"
+import { trackApplicationStart } from "@/lib/gtag"
 
 
 interface VisaOptionsProps {
@@ -70,6 +71,8 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
   }, [searchFilters, allVisaOptions])
 
   const handleCardClick = (countryCode: string) => {
+    // Track visa application start in Google Analytics
+    trackApplicationStart(countryCode)
     router.push(`/visa/${countryCode}`)
   }
 
