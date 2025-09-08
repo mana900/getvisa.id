@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { VisaType } from "@/lib/types/database"
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 const countryOptions = [
   { code: "canada", name: "Canada", flag: "🇨🇦" },
@@ -29,6 +31,7 @@ export default function EditVisaPage() {
   const router = useRouter()
   const params = useParams()
   const visaId = params.id as string
+  const { toasts, showToast, removeToast } = useToast()
 
   const [visa, setVisa] = useState<VisaType | null>(null)
   const [loading, setLoading] = useState(true)
@@ -168,7 +171,7 @@ export default function EditVisaPage() {
     
     // Validate required fields
     if (!formData.country || !formData.visaType || !formData.price) {
-      alert('Please fill in all required fields')
+      showToast('Please fill in all required fields', 'error')
       return
     }
 
@@ -203,14 +206,14 @@ export default function EditVisaPage() {
       })
       
       if (response.ok) {
-        alert('Visa type updated successfully!')
+        showToast('Visa type updated successfully!', 'success')
         router.push('/admin/visa-types')
       } else {
         const error = await response.text()
-        alert(`Error updating visa type: ${error}`)
+        showToast(`Error updating visa type: ${error}`, 'error')
       }
     } catch (error) {
-      alert('Error updating visa type')
+      showToast('Error updating visa type', 'error')
       console.error('Update error:', error)
     }
   }
@@ -539,6 +542,7 @@ export default function EditVisaPage() {
           </Button>
         </div>
       </form>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

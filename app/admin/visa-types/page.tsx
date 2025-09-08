@@ -11,8 +11,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { VisaService } from "@/lib/services/visa-service"
 import { Search, Plus, Edit, Trash2, Eye, ChevronDown, ChevronRight } from "lucide-react"
 import { formatIDR } from "@/lib/utils/currency"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function VisaTypesPage() {
+  const { toasts, showToast, removeToast } = useToast()
   const [allVisaTypes, setAllVisaTypes] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [expandedCountries, setExpandedCountries] = useState<string[]>([])
@@ -81,7 +84,7 @@ export default function VisaTypesPage() {
       }
     } catch (error) {
       console.error('Error updating visa status:', error)
-      alert('Error updating visa status')
+      showToast('Error updating visa status', 'error')
     }
   }
 
@@ -95,10 +98,10 @@ export default function VisaTypesPage() {
     try {
       await VisaService.deleteVisaType(id)
       setAllVisaTypes(prev => prev.filter(v => v.id !== id))
-      alert('Visa type deleted successfully')
+      showToast('Visa type deleted successfully', 'success')
     } catch (error) {
       console.error('Error deleting visa type:', error)
-      alert('Error deleting visa type. Please try again.')
+      showToast('Error deleting visa type. Please try again.', 'error')
     }
   }
 
@@ -270,6 +273,7 @@ export default function VisaTypesPage() {
           </div>
         </CardContent>
       </Card>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

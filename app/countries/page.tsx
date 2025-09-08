@@ -11,38 +11,133 @@ import { VisaService } from "@/lib/services/visa-service"
 
 // Country photos mapping for popular destinations
 const countryImages = {
-  'US': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'CA': 'https://images.unsplash.com/photo-1503614472-8c93d56cd601?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'UK': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'AU': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'JP': 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'DE': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'FR': 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'IT': 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'ES': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'NL': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'CH': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'SG': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=300&fit=crop&crop=entropy&auto=format',
-  'TH': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&h=300&fit=crop&crop=entropy&auto=format',
+  // Current database countries (lowercase full names)
+  'australia': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&crop=entropy&auto=format', // Sydney Opera House
+  'canada': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop&crop=entropy&auto=format', // Canada forest lake
+  'china': 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&h=300&fit=crop&crop=entropy&auto=format', // China Great Wall
+  'singapore': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=300&fit=crop&crop=entropy&auto=format', // Singapore Marina Bay
+  'uae': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&h=300&fit=crop&crop=entropy&auto=format', // Dubai skyline
+  
+  // Alternative Canada URLs in case first one fails
+  'canada_alt1': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?w=400&h=300&fit=crop&crop=entropy&auto=format', // Canada Banff
+  'canada_alt2': 'https://images.unsplash.com/photo-1519832064-4d24ad9b66b9?w=400&h=300&fit=crop&crop=entropy&auto=format', // Canada Toronto
+  
+  // Additional countries for future use  
+  'usa': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&h=300&fit=crop&crop=entropy&auto=format', // New York skyline
+  'united_states': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&h=300&fit=crop&crop=entropy&auto=format', // New York skyline
+  'uk': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop&crop=entropy&auto=format', // London Big Ben
+  'united_kingdom': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop&crop=entropy&auto=format', // London Big Ben
+  'germany': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Germany Berlin
+  'france': 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=400&h=300&fit=crop&crop=entropy&auto=format', // Paris Eiffel Tower
+  'italy': 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Italy Colosseum
+  'spain': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=300&fit=crop&crop=entropy&auto=format', // Spain Barcelona
+  'netherlands': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&h=300&fit=crop&crop=entropy&auto=format', // Netherlands canals
+  'switzerland': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&crop=entropy&auto=format', // Swiss Alps
+  'norway': 'https://images.unsplash.com/photo-1464822759844-d150f4c0ca60?w=400&h=300&fit=crop&crop=entropy&auto=format', // Norway fjords
+  'sweden': 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=400&h=300&fit=crop&crop=entropy&auto=format', // Sweden Stockholm
+  'denmark': 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=400&h=300&fit=crop&crop=entropy&auto=format', // Denmark Copenhagen
+  'new_zealand': 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop&crop=entropy&auto=format', // New Zealand landscape  
+  'japan': 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400&h=300&fit=crop&crop=entropy&auto=format', // Japan Tokyo
+  'south_korea': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Korea Seoul
+  'korea': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Korea Seoul
+  'thailand': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&h=300&fit=crop&crop=entropy&auto=format', // Thailand Bangkok
+  'vietnam': 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Vietnam Ha Long Bay
+  'malaysia': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&h=300&fit=crop&crop=entropy&auto=format', // Malaysia Kuala Lumpur
+  'philippines': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop&crop=entropy&auto=format', // Philippines Palawan
+  'india': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop&crop=entropy&auto=format', // India Taj Mahal
+  'sri_lanka': 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=400&h=300&fit=crop&crop=entropy&auto=format', // Sri Lanka temple
+  'qatar': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Qatar Doha
+  'saudi_arabia': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format', // Saudi Arabia
+  'israel': 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=300&fit=crop&crop=entropy&auto=format', // Israel Jerusalem
+  'turkey': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400&h=300&fit=crop&crop=entropy&auto=format', // Turkey Istanbul
+  'south_africa': 'https://images.unsplash.com/photo-1484318571209-661cf29a69ea?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Africa Cape Town
+  'egypt': 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c2e?w=400&h=300&fit=crop&crop=entropy&auto=format', // Egypt pyramids
+  'morocco': 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Morocco
+  'kenya': 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=300&fit=crop&crop=entropy&auto=format', // Kenya safari
+  'brazil': 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&h=300&fit=crop&crop=entropy&auto=format', // Brazil Rio
+  'argentina': 'https://images.unsplash.com/photo-1589909202802-8c50ba863a7d?w=400&h=300&fit=crop&crop=entropy&auto=format', // Argentina Buenos Aires
+  'chile': 'https://images.unsplash.com/photo-1544827150-6855c55b5282?w=400&h=300&fit=crop&crop=entropy&auto=format', // Chile Patagonia
+  'peru': 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=400&h=300&fit=crop&crop=entropy&auto=format', // Peru Machu Picchu
+  
   'default': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop&crop=entropy&auto=format'
+}
+
+// Helper function to get country image with fallback
+function getCountryImage(countryCode: string, countryName: string): string {
+  // Special handling for Canada with multiple fallbacks
+  if (countryCode === 'canada') {
+    return countryImages['canada'] || countryImages['canada_alt1'] || countryImages['canada_alt2']
+  }
+  
+  // First try exact country code match
+  if (countryImages[countryCode]) {
+    return countryImages[countryCode]
+  }
+  
+  // Try common variations
+  const variations = [
+    countryCode.toLowerCase(),
+    countryCode.replace(/\s+/g, '_').toLowerCase(),
+    countryCode.replace(/\s+/g, '').toLowerCase(),
+    countryName?.toLowerCase().replace(/\s+/g, '_')
+  ]
+  
+  for (const variation of variations) {
+    if (countryImages[variation]) {
+      return countryImages[variation]
+    }
+  }
+  
+  // Use default fallback image
+  return countryImages.default
 }
 
 // Helper function to get region from country code
 function getRegion(countryCode: string): string {
   const regions: Record<string, string> = {
-    'US': 'North America',
-    'CA': 'North America',
-    'UK': 'Europe', 
-    'DE': 'Europe',
-    'FR': 'Europe',
-    'IT': 'Europe',
-    'ES': 'Europe',
-    'NL': 'Europe',
-    'CH': 'Europe',
-    'AU': 'Oceania',
-    'JP': 'Asia',
-    'SG': 'Asia',
-    'TH': 'Asia'
+    // Current database countries
+    'australia': 'Oceania',
+    'canada': 'North America',
+    'china': 'Asia',
+    'singapore': 'Asia',
+    'uae': 'Middle East',
+    
+    // Additional countries for future use
+    'usa': 'North America',
+    'united_states': 'North America',
+    'uk': 'Europe',
+    'united_kingdom': 'Europe', 
+    'germany': 'Europe',
+    'france': 'Europe',
+    'italy': 'Europe',
+    'spain': 'Europe',
+    'netherlands': 'Europe',
+    'switzerland': 'Europe',
+    'norway': 'Europe',
+    'sweden': 'Europe',
+    'denmark': 'Europe',
+    'turkey': 'Europe',
+    'new_zealand': 'Oceania',
+    'japan': 'Asia',
+    'south_korea': 'Asia',
+    'korea': 'Asia',
+    'thailand': 'Asia',
+    'vietnam': 'Asia',
+    'malaysia': 'Asia',
+    'philippines': 'Asia',
+    'india': 'Asia',
+    'sri_lanka': 'Asia',
+    'qatar': 'Middle East',
+    'saudi_arabia': 'Middle East',
+    'israel': 'Middle East',
+    'south_africa': 'Africa',
+    'egypt': 'Africa',
+    'morocco': 'Africa',
+    'kenya': 'Africa',
+    'brazil': 'South America',
+    'argentina': 'South America',
+    'chile': 'South America',
+    'peru': 'South America'
   }
   return regions[countryCode] || 'Other'
 }
@@ -149,7 +244,9 @@ export default function CountriesPage() {
                 <div className="relative h-48 rounded-xl overflow-hidden mb-4">
                   <div
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${countryImages[country.countryCode as keyof typeof countryImages] || countryImages.default})` }}
+                    style={{ 
+                      backgroundImage: `url(${getCountryImage(country.countryCode, country.country)})`,
+                    }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                   </div>

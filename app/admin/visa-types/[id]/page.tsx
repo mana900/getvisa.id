@@ -11,9 +11,12 @@ import { VisaType } from "@/lib/types/database"
 import { VisaService } from "@/lib/services/visa-service"
 import { ArrowLeft, Edit, Trash2, Eye, CheckCircle, FileText, Clock, DollarSign } from "lucide-react"
 import { formatIDR } from "@/lib/utils/currency"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function VisaDetailsPage() {
   const router = useRouter()
+  const { toasts, showToast, removeToast } = useToast()
   const params = useParams()
   const visaId = params.id as string
 
@@ -75,18 +78,18 @@ export default function VisaDetailsPage() {
       setVisa(updatedVisa)
     } catch (error) {
       console.error('Error updating visa status:', error)
-      alert('Error updating visa status')
+      showToast('Error updating visa status', 'error')
     }
   }
 
   const handleDelete = async () => {
     try {
       await VisaService.deleteVisaType(visa.id)
-      alert('Visa type deleted successfully!')
+      showToast('Visa type deleted successfully!', 'success')
       router.push('/admin/visa-types')
     } catch (error) {
       console.error('Error deleting visa type:', error)
-      alert('Error deleting visa type')
+      showToast('Error deleting visa type', 'error')
     }
   }
 
@@ -328,6 +331,7 @@ export default function VisaDetailsPage() {
           </Card>
         </div>
       )}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, UserCheck } from "lucide-react"
 import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function EditUserPage() {
   const router = useRouter()
@@ -18,6 +20,7 @@ export default function EditUserPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const { toasts, showToast, removeToast } = useToast()
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -66,15 +69,15 @@ export default function EditUserPage() {
       })
 
       if (response.ok) {
-        alert('User updated successfully!')
+        showToast('User updated successfully!', 'success')
         router.push('/admin/users')
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || 'Failed to update user'}`)
+        showToast(`Error: ${error.error || 'Failed to update user'}`, 'error')
       }
     } catch (error) {
       console.error('Error updating user:', error)
-      alert('Error updating user')
+      showToast('Error updating user', 'error')
     } finally {
       setSaving(false)
     }
@@ -194,6 +197,7 @@ export default function EditUserPage() {
           </form>
         </CardContent>
       </Card>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

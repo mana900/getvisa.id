@@ -10,8 +10,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Save, Mail, Globe, Shield, MessageCircle } from "lucide-react"
 import { SettingsService } from "@/lib/services/settings-service"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function AdminSettingsPage() {
+  const { toasts, showToast, removeToast } = useToast()
   const [settings, setSettings] = useState({
     siteName: "GetVisa.ID",
     siteDescription: "Your trusted partner for visa applications worldwide",
@@ -82,13 +85,13 @@ export default function AdminSettingsPage() {
       }
       
       // In a real app, this would save other settings to the backend too
-      alert("Settings saved successfully!")
+      showToast("Settings saved successfully!", 'success')
     } catch (error) {
       console.error('Detailed error saving settings:', error)
       
       // Show more specific error message
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-      alert(`Error saving settings: ${errorMessage}\n\nPlease check the console for more details.`)
+      showToast(`Error saving settings: ${errorMessage}\n\nPlease check the console for more details.`, 'error')
     }
   }
 
@@ -341,6 +344,7 @@ export default function AdminSettingsPage() {
           Save Settings
         </Button>
       </div>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

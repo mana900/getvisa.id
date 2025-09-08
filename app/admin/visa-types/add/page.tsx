@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { VisaService } from "@/lib/services/visa-service"
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 const countryOptions = [
   { code: "afghanistan", name: "Afghanistan", flag: "🇦🇫" },
@@ -196,6 +198,7 @@ const countryOptions = [
 
 export default function AddVisaPage() {
   const router = useRouter()
+  const { toasts, showToast, removeToast } = useToast()
   const searchParams = useSearchParams()
   const preselectedCountry = searchParams.get('country')
 
@@ -279,7 +282,7 @@ export default function AddVisaPage() {
     
     // Validate required fields
     if (!formData.country || !formData.visaType || !formData.price) {
-      alert('Please fill in all required fields')
+      showToast('Please fill in all required fields', 'error')
       return
     }
 
@@ -305,11 +308,11 @@ export default function AddVisaPage() {
         faqs: formData.faqs.filter(faq => faq.question.trim() !== '' && faq.answer.trim() !== '')
       })
       
-      alert('Visa type created successfully!')
+      showToast('Visa type created successfully!', 'success')
       router.push('/admin/visa-types')
     } catch (error) {
       console.error('Error creating visa type:', error)
-      alert('Error creating visa type. Please try again.')
+      showToast('Error creating visa type. Please try again.', 'error')
     }
   }
 
@@ -660,6 +663,7 @@ export default function AddVisaPage() {
           </Button>
         </div>
       </form>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

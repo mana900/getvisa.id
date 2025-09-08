@@ -8,11 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { User } from "@/lib/types/database"
 import { Search, UserPlus, Edit, Trash2, Shield, User as UserIcon } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const { toasts, showToast, removeToast } = useToast()
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -59,16 +62,16 @@ export default function UsersPage() {
       })
 
       if (response.ok) {
-        alert('User deleted successfully!')
+        showToast('User deleted successfully!', 'success')
         // Refresh the users list
         setUsers(prev => prev.filter(user => user.id !== userId))
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || 'Failed to delete user'}`)
+        showToast(`Error: ${error.error || 'Failed to delete user'}`, 'error')
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert('Error deleting user')
+      showToast('Error deleting user', 'error')
     }
   }
 
@@ -185,6 +188,7 @@ export default function UsersPage() {
           </div>
         </CardContent>
       </Card>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

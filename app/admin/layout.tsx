@@ -12,7 +12,8 @@ import {
   Menu, 
   X, 
   Bell,
-  Globe
+  Globe,
+  BookOpen
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSupabaseAuth } from "@/components/supabase-auth-provider"
@@ -22,6 +23,7 @@ const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Documents", href: "/admin/documents", icon: FileText },
   { name: "Visa Types", href: "/admin/visa-types", icon: Globe },
+  { name: "Blog Posts", href: "/admin/blog/posts", icon: BookOpen },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
@@ -54,7 +56,7 @@ export default function AdminLayout({
             </div>
             <nav className="flex-1 px-4 py-6 space-y-2">
               {navigation.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <Link
                     key={item.name}
@@ -104,7 +106,7 @@ export default function AdminLayout({
             </div>
             <nav className="flex-1 px-4 py-6 space-y-2">
               {navigation.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
                   <Link
                     key={item.name}

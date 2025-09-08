@@ -9,10 +9,13 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, UserPlus } from "lucide-react"
 import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
+import { ToastContainer } from "@/components/toast-container"
 
 export default function AddUserPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const { toasts, showToast, removeToast } = useToast()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,15 +38,15 @@ export default function AddUserPage() {
       })
 
       if (response.ok) {
-        alert('User created successfully!')
+        showToast('User created successfully!', 'success')
         router.push('/admin/users')
       } else {
         const error = await response.json()
-        alert(`Error: ${error.error || 'Failed to create user'}`)
+        showToast(`Error: ${error.error || 'Failed to create user'}`, 'error')
       }
     } catch (error) {
       console.error('Error creating user:', error)
-      alert('Error creating user')
+      showToast('Error creating user', 'error')
     } finally {
       setLoading(false)
     }
@@ -152,6 +155,7 @@ export default function AddUserPage() {
           </form>
         </CardContent>
       </Card>
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }
