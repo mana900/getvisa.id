@@ -1,21 +1,21 @@
 import { MetadataRoute } from 'next'
 
-interface BlogPost {
-  slug: string
-  category: string
-  updated_at: string
-}
-
-async function getPublishedPosts(): Promise<BlogPost[]> {
+async function getPublishedPosts() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/blog/posts?limit=1000`)
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch posts')
+    // Use direct database query to avoid API route issues
+    const { supabase } = await import('@/lib/supabase')
+    const { data: posts, error } = await supabase
+      .from('blog_posts')
+      .select('slug, category, updated_at, published_at')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching posts for sitemap:', error)
+      return []
     }
-    
-    const data = await response.json()
-    return data.posts.map((post: any) => ({
+
+    return (posts || []).map((post) => ({
       slug: post.slug,
       category: post.category,
       updated_at: post.updated_at || post.published_at
@@ -26,33 +26,66 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
   }
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://getvisa.id'
-  
-  // Get all published blog posts
-  const posts = await getPublishedPosts()
-  
-  // Generate blog post URLs
-  const blogUrls: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${baseUrl}/resources/${post.slug}`,
-    lastModified: new Date(post.updated_at),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }))
+async function getVisaTypes() {
+  try {
+    const { supabase } = await import('@/lib/supabase')
+    const { data: visaTypes, error } = await supabase
+      .from('visa_types')
+      .select('country_code, country_name, updated_at')
+      .order('country_code')
 
-  // Static pages
+    if (error) {
+      console.error('Error fetching visa types for sitemap:', error)
+      return []
+    }
+
+    return visaTypes || []
+  } catch (error) {
+    console.error('Error fetching visa types for sitemap:', error)
+    return []
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = 'https://getvisa.id'
+  
+  // Get dynamic data
+  const [posts, visaTypes] = await Promise.all([
+    getPublishedPosts(),
+    getVisaTypes()
+  ])
+  
+  // Static pages with high priority
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/countries`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/resources`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/dashboard`,
@@ -62,43 +95,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ]
 
-  // Visa service pages (you can expand this based on your visa types)
-  const visaServicePages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/visa/us`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/visa/canada`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/visa/uk`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/visa/australia`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/visa/schengen`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    }
-  ]
+  // Dynamic blog post URLs
+  const blogUrls: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${baseUrl}/resources/${post.slug}`,
+    lastModified: new Date(post.updated_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
+  // Dynamic visa service pages from database
+  const visaServicePages: MetadataRoute.Sitemap = visaTypes.map((visa) => ({
+    url: `${baseUrl}/visa/${visa.country_code.toLowerCase()}`,
+    lastModified: new Date(visa.updated_at || new Date()),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  // Country-specific pages from database
+  const countryPages: MetadataRoute.Sitemap = visaTypes.map((visa) => ({
+    url: `${baseUrl}/countries/${visa.country_code.toLowerCase()}`,
+    lastModified: new Date(visa.updated_at || new Date()),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  // Category-specific blog pages
+  const categories = ['visa-guides', 'country-guides', 'document-guides', 'travel-tips']
+  const categoryPages: MetadataRoute.Sitemap = categories.map((category) => ({
+    url: `${baseUrl}/resources/category/${category}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }))
 
   return [
     ...staticPages,
     ...visaServicePages,
-    ...blogUrls
+    ...countryPages,
+    ...blogUrls,
+    ...categoryPages
   ]
 }
