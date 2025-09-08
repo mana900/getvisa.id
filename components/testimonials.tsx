@@ -3,62 +3,102 @@
 import { useState, useRef, useEffect } from "react"
 import { Star, ChevronLeft, ChevronRight } from "lucide-react"
 
+interface Testimonial {
+  id: number
+  name: string
+  date: string
+  rating: number
+  review: string
+  is_featured: boolean
+}
+
 export default function Testimonials() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  const testimonials = [
+  // Fetch testimonials from database
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/admin/testimonials?featured_only=true&limit=10')
+        if (response.ok) {
+          const data = await response.json()
+          setTestimonials(data.testimonials)
+        }
+      } catch (error) {
+        console.error('Error fetching testimonials:', error)
+        // Fallback to hardcoded testimonials if API fails
+        setTestimonials(fallbackTestimonials)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTestimonials()
+  }, [])
+
+  // Fallback testimonials in case API fails
+  const fallbackTestimonials = [
     {
       id: 1,
       name: "Jeannie Grant",
       date: "June 01, 2023",
       rating: 5,
-      review: "A thorough report was done on our financial situation of what insurance covers etc existing. Better deals were found. These were processed on our behalf, which took a lot of stress away. Updates were given as required and outstanding responses chased after."
+      review: "A thorough report was done on our financial situation of what insurance covers etc existing. Better deals were found. These were processed on our behalf, which took a lot of stress away. Updates were given as required and outstanding responses chased after.",
+      is_featured: true
     },
     {
       id: 2,
       name: "Derval Russell",
       date: "November 09, 2023",
       rating: 5,
-      review: "I have been a client of GetVisa.ID for 8 years now and have always found the advice provided by our consultant excellent. They always take the time to explain things really clearly to me and ensures I understand and am well informed and therefore able to make appropriate decisions."
+      review: "I have been a client of GetVisa.ID for 8 years now and have always found the advice provided by our consultant excellent. They always take the time to explain things really clearly to me and ensures I understand and am well informed and therefore able to make appropriate decisions.",
+      is_featured: true
     },
     {
       id: 3,
       name: "Claire Watson",
       date: "October 12, 2023",
       rating: 5,
-      review: "Claire consistently demonstrates thorough knowledge and understanding of visa requirements and provides excellent customer service. She takes time to explain complex visa processes clearly and makes the entire application stress-free."
+      review: "Claire consistently demonstrates thorough knowledge and understanding of visa requirements and provides excellent customer service. She takes time to explain complex visa processes clearly and makes the entire application stress-free.",
+      is_featured: true
     },
     {
       id: 4,
       name: "Michael Chen",
       date: "September 15, 2023",
       rating: 5,
-      review: "Outstanding service from start to finish. GetVisa.ID made my visa application process seamless and stress-free. The team was professional, responsive, and kept me informed throughout the entire process."
+      review: "Outstanding service from start to finish. GetVisa.ID made my visa application process seamless and stress-free. The team was professional, responsive, and kept me informed throughout the entire process.",
+      is_featured: true
     },
     {
       id: 5,
       name: "Sarah Johnson",
       date: "August 22, 2023",
       rating: 5,
-      review: "I was impressed by the efficiency and professionalism of GetVisa.ID. They handled all the paperwork and made sure everything was submitted correctly and on time. Highly recommended for anyone needing visa services."
+      review: "I was impressed by the efficiency and professionalism of GetVisa.ID. They handled all the paperwork and made sure everything was submitted correctly and on time. Highly recommended for anyone needing visa services.",
+      is_featured: true
     },
     {
       id: 6,
       name: "Ahmad Rahman",
       date: "July 18, 2023",
       rating: 5,
-      review: "Exceptional service! The team at GetVisa.ID went above and beyond to ensure my visa application was successful. Their attention to detail and customer service is unmatched."
+      review: "Exceptional service! The team at GetVisa.ID went above and beyond to ensure my visa application was successful. Their attention to detail and customer service is unmatched.",
+      is_featured: true
     },
     {
       id: 7,
       name: "Lisa Thompson",
       date: "June 25, 2023",
       rating: 5,
-      review: "GetVisa.ID saved me so much time and stress. Their expertise in visa requirements is evident, and they made the whole process straightforward. I couldn't be happier with the service."
+      review: "GetVisa.ID saved me so much time and stress. Their expertise in visa requirements is evident, and they made the whole process straightforward. I couldn't be happier with the service.",
+      is_featured: true
     }
   ]
 
@@ -142,32 +182,41 @@ export default function Testimonials() {
 
         {/* Carousel Container */}
         <div className="relative">
-          {/* Navigation Buttons */}
-          <div className="absolute right-0 -top-20 flex space-x-2 z-10">
-            <button
-              onClick={scrollToPrev}
-              className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors bg-white"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <button
-              onClick={scrollToNext}
-              className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors bg-white"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-gray-600">Loading testimonials...</div>
+            </div>
+          ) : testimonials.length === 0 ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-gray-600">No testimonials available.</div>
+            </div>
+          ) : (
+            <>
+              {/* Navigation Buttons */}
+              <div className="absolute right-0 -top-20 flex space-x-2 z-10">
+                <button
+                  onClick={scrollToPrev}
+                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors bg-white"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-600" />
+                </button>
+                <button
+                  onClick={scrollToNext}
+                  className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors bg-white"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
 
-          {/* Testimonials Carousel */}
-          <div
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-8 pb-4 scroll-smooth scrollbar-hide cursor-grab"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
+              {/* Testimonials Carousel */}
+              <div
+                ref={scrollContainerRef}
+                className="flex overflow-x-auto gap-8 pb-4 scroll-smooth scrollbar-hide cursor-grab"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
             {testimonials.map((testimonial) => (
               <div
                 key={testimonial.id}
@@ -194,15 +243,11 @@ export default function Testimonials() {
                 </div>
               </div>
             ))}
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   )
 }

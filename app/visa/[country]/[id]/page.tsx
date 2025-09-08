@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Clock, Calendar, FileText, Shield, CheckCircle } from "lucide-react"
+import { ArrowLeft, Clock, Calendar, FileText, Shield, CheckCircle, User, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { VisaService } from "@/lib/services/visa-service"
 import { SettingsService } from "@/lib/services/settings-service"
 import type { VisaType } from "@/lib/types/database"
@@ -31,6 +33,12 @@ export default function VisaDetailPage() {
   const [whatsappNumber, setWhatsappNumber] = useState<string>("")
   const [messageTemplate, setMessageTemplate] = useState<string>("")
   const [loading, setLoading] = useState(true)
+  
+  // Form states
+  const [userName, setUserName] = useState<string>("")
+  const [userPhone, setUserPhone] = useState<string>("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [leadId, setLeadId] = useState<number | null>(null)
 
   // Helper function to calculate completion date
   const calculateCompletionDate = (days: string | number) => {
@@ -49,6 +57,70 @@ export default function VisaDetailPage() {
       year: 'numeric'
     })
   }
+
+  // Handle contact form submission
+  const handleContactSubmit = async () => {
+    if (!userName.trim() || !userPhone.trim()) {
+      return
+    }
+
+    setIsSubmitting(true)
+    
+    try {
+      const response = await fetch('/api/contact-leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userName.trim(),
+          phone: userPhone.trim(),
+          country: visa?.country,
+          visa_type: visa?.visa_type,
+          visa_id: visaId,
+          price: visa?.price,
+          source: 'visa_detail_page'
+        }),
+      })
+
+      const result = await response.json()
+      
+      if (response.ok) {
+        setLeadId(result.leadId)
+        
+        // Track the WhatsApp click
+        if (result.leadId) {
+          await fetch(`/api/contact-leads/${result.leadId}/whatsapp`, {
+            method: 'POST',
+          })
+        }
+        
+        // Generate personalized message
+        const personalizedMessage = `Hi! I'm ${userName.trim()} and I'm interested in the ${visa?.visa_type} for ${visa?.country}. My phone number is ${userPhone.trim()}. ${messageTemplate.replace('{countryName}', visa?.country || '').replace('{visaType}', visa?.visa_type || '')}`
+        
+        // Open WhatsApp
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(personalizedMessage)}`
+        
+        // Track analytics
+        trackContactConsultantClick(visa?.country || '', visa?.visa_type || '', 'whatsapp')
+        trackWhatsAppMessageSent(visa?.country || '', visa?.visa_type || '')
+        
+        // Open WhatsApp in new tab
+        window.open(whatsappUrl, '_blank')
+      } else {
+        console.error('Error submitting contact info:', result.error)
+        alert('There was an error. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error submitting contact info:', error)
+      alert('There was an error. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Check if form is valid
+  const isFormValid = userName.trim().length > 0 && userPhone.trim().length > 0
 
   // Fetch visa data and settings from database
   useEffect(() => {
@@ -259,25 +331,62 @@ export default function VisaDetailPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-8">
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-green-600 mb-2">{formatIDR(visa.price)}</div>
-                <div className="text-gray-500 mb-4">Processing time: {visa.processing_time}</div>
-                <button 
-                  className="w-full bg-black text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3"
-                  onClick={() => trackApplyNowClick(visa.country, visa.visa_type, visa.price)}
+                <div className="text-gray-500 mb-6">Processing time: {visa.processing_time}</div>
+                
+                {/* Contact Form */}
+                <div className="space-y-4 mb-6">
+                  <div className="text-left">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                      Full Name *
+                    </Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        className="pl-10"
+                      />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                  
+                  <div className="text-left">
+                    <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                      Phone Number *
+                    </Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+62 812 3456 7890"
+                        value={userPhone}
+                        onChange={(e) => setUserPhone(e.target.value)}
+                        className="pl-10"
+                      />
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleContactSubmit}
+                  disabled={!isFormValid || isSubmitting}
+                  className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+                    isFormValid 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
-                  Apply Now
-                </button>
-                <a 
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageTemplate.replace('{countryName}', visa.country).replace('{visaType}', visa.visa_type))}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 transition-colors block text-center"
-                  onClick={() => {
-                    trackContactConsultantClick(visa.country, visa.visa_type, 'whatsapp')
-                    trackWhatsAppMessageSent(visa.country, visa.visa_type)
-                  }}
-                >
-                  Contact Consultant
-                </a>
+                  {isSubmitting ? 'Connecting...' : 'Contact Consultant'}
+                </Button>
+                
+                {!isFormValid && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Please enter your name and phone number to continue
+                  </p>
+                )}
               </div>
 
               <div className="space-y-4 text-sm">

@@ -18,7 +18,7 @@ interface VisaOptionsProps {
 
 export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
   const router = useRouter()
-  const [displayedVisas, setDisplayedVisas] = useState(8)
+  const [displayedVisas, setDisplayedVisas] = useState(9)
   const [filteredVisas, setFilteredVisas] = useState<VisaType[]>([])
   const [allVisaOptions, setAllVisaOptions] = useState<VisaType[]>([])
   const [loading, setLoading] = useState(true)
@@ -67,7 +67,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
     }
 
     setFilteredVisas(filtered)
-    setDisplayedVisas(8) // Reset display count when filters change
+    setDisplayedVisas(9) // Reset display count when filters change
   }, [searchFilters, allVisaOptions])
 
   const handleCardClick = (countryCode: string, visaType?: string) => {
@@ -80,7 +80,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
   }
 
   const handleLoadMore = () => {
-    setDisplayedVisas((prev) => Math.min(prev + 8, filteredVisas.length))
+    setDisplayedVisas((prev) => Math.min(prev + 9, filteredVisas.length))
   }
 
   const visasToShow = filteredVisas.slice(0, displayedVisas)
@@ -119,7 +119,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {visasToShow.map((visa, index) => (
                 <div
                   key={visa.id}
@@ -132,7 +132,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{visa.country}</h3>
                         <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                          E-Visa
+                          Visa
                         </span>
                       </div>
                     </div>
@@ -152,28 +152,28 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                   </div>
 
                   <div className="px-6 pb-6 space-y-3">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-start justify-between text-sm">
                       <div className="flex items-center text-gray-600">
                         <Clock className="w-4 h-4 mr-2" />
                         <span>Process time</span>
                       </div>
-                      <span className="font-medium text-gray-900">{visa.processing_time}</span>
+                      <span className="font-medium text-gray-900 text-right ml-2">{visa.processing_time}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-start justify-between text-sm">
                       <div className="flex items-center text-gray-600">
                         <Calendar className="w-4 h-4 mr-2" />
                         <span>Duration</span>
                       </div>
-                      <span className="font-medium text-gray-900">{visa.duration}</span>
+                      <span className="font-medium text-gray-900 text-right ml-2">{visa.duration}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-start justify-between text-sm">
                       <div className="flex items-center text-gray-600">
                         <FileText className="w-4 h-4 mr-2" />
                         <span>Validity</span>
                       </div>
-                      <span className="font-medium text-gray-900">{visa.validity}</span>
+                      <span className="font-medium text-gray-900 text-right ml-2">{visa.validity}</span>
                     </div>
 
                     {visa.documents && visa.documents.length > 0 && (

@@ -51,6 +51,8 @@ const countryImages = {
   'israel': 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=300&fit=crop&crop=entropy&auto=format', // Israel Jerusalem
   'turkey': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400&h=300&fit=crop&crop=entropy&auto=format', // Turkey Istanbul
   'south_africa': 'https://images.unsplash.com/photo-1484318571209-661cf29a69ea?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Africa Cape Town
+  'southafrica': 'https://images.unsplash.com/photo-1484318571209-661cf29a69ea?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Africa
+  'za': 'https://images.unsplash.com/photo-1484318571209-661cf29a69ea?w=400&h=300&fit=crop&crop=entropy&auto=format', // South Africa ISO code
   'egypt': 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c2e?w=400&h=300&fit=crop&crop=entropy&auto=format', // Egypt pyramids
   'morocco': 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=400&h=300&fit=crop&crop=entropy&auto=format', // Morocco
   'kenya': 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=300&fit=crop&crop=entropy&auto=format', // Kenya safari
@@ -131,6 +133,8 @@ function getRegion(countryCode: string): string {
     'saudi_arabia': 'Middle East',
     'israel': 'Middle East',
     'south_africa': 'Africa',
+    'southafrica': 'Africa',
+    'za': 'Africa',
     'egypt': 'Africa',
     'morocco': 'Africa',
     'kenya': 'Africa',
@@ -243,10 +247,10 @@ export default function CountriesPage() {
                 {/* Card Image */}
                 <div className="relative h-48 rounded-xl overflow-hidden mb-4">
                   <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center country-image"
                     style={{ 
-                      backgroundImage: `url(${getCountryImage(country.countryCode, country.country)})`,
-                    }}
+                      '--bg-image': `url(${getCountryImage(country.countryCode, country.country)})`,
+                    } as React.CSSProperties}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                   </div>

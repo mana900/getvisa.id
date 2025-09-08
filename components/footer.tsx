@@ -24,12 +24,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         {/* Travel Without Limit Section */}
         <div className="relative bg-gradient-to-r from-teal-800 to-gray-600 rounded-3xl mb-16 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-50"
-            style={{
-              backgroundImage: "url('/ocean-waves-meeting-beach-aerial-view.png')",
-            }}
-          ></div>
+          <div className="absolute inset-0 bg-cover bg-center opacity-50 bg-beach-aerial"></div>
           <div className="relative z-10 px-8 py-16 flex flex-col md:flex-row items-center justify-between">
             <div className="text-white mb-8 md:mb-0">
               <h2 className="text-4xl font-bold mb-4">Travel without limit</h2>
@@ -135,10 +130,10 @@ export default function Footer() {
             <div className="space-y-3">
               <p className="text-sm text-gray-600">Follow us:</p>
               <div className="flex space-x-3">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/getvisaid/" target="_blank" rel="noopener noreferrer">
                   <Instagram className="w-5 h-5 text-gray-600 hover:text-gray-900 cursor-pointer" />
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.linkedin.com/company/travion-travel/" target="_blank" rel="noopener noreferrer">
                   <Linkedin className="w-5 h-5 text-gray-600 hover:text-gray-900 cursor-pointer" />
                 </a>
               </div>

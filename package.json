@@ -10,7 +10,8 @@
     "migrate-data": "npx ts-node scripts/migrate-data.ts",
     "setup-db": "npx ts-node scripts/setup-database.ts",
     "deploy-schema": "npx ts-node scripts/deploy-schema.ts",
-    "fix-blog-slugs": "npx ts-node scripts/fix-blog-slugs.ts"
+    "fix-blog-slugs": "npx ts-node scripts/fix-blog-slugs.ts",
+    "setup-testimonials": "npx ts-node scripts/setup-testimonials.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

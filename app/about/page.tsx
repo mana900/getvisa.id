@@ -101,10 +101,7 @@ That’s why we created GetVisa.id
 
       {/* Required Amenities Section */}
       <section className="relative min-h-screen">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=800&fit=crop&crop=entropy&auto=format)" }}
-        ></div>
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-about-hero"></div>
         <div className="absolute inset-0 bg-black/40"></div>
         
         <div className="relative z-10 min-h-screen flex items-center">

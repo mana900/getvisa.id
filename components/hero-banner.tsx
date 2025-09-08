@@ -61,10 +61,7 @@ export default function HeroBanner({ onSearchChange }: HeroBannerProps) {
 
   return (
     <div className="relative rounded-3xl mx-6 mb-6 overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/canyon-background.jpg)" }}
-      ></div>
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-hero-canyon"></div>
       <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
       <div className="relative z-10 px-12 py-32 text-center text-white">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">

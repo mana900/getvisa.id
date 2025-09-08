@@ -13,17 +13,22 @@ import {
   X, 
   Bell,
   Globe,
-  BookOpen
+  BookOpen,
+  MessageSquare,
+  Contact
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSupabaseAuth } from "@/components/supabase-auth-provider"
 import ProtectedRoute from "@/components/protected-route"
+import { Toaster } from "@/components/ui/toaster"
 
 const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Documents", href: "/admin/documents", icon: FileText },
   { name: "Visa Types", href: "/admin/visa-types", icon: Globe },
   { name: "Blog Posts", href: "/admin/blog/posts", icon: BookOpen },
+  { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
+  { name: "Contact Leads", href: "/admin/contact-leads", icon: Contact },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
@@ -179,6 +184,7 @@ export default function AdminLayout({
           </main>
         </div>
       </div>
+      <Toaster />
     </ProtectedRoute>
   )
 }

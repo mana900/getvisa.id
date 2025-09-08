@@ -121,3 +121,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Background Images */
+  .bg-hero-canyon {
+    background-image: url('/canyon-background.jpg');
+  }
+  
+  .bg-beach-aerial {
+    background-image: url('/ocean-waves-meeting-beach-aerial-view.png');
+  }
+  
+  .bg-about-hero {
+    background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=800&fit=crop&crop=entropy&auto=format');
+  }
+  
+  /* Dynamic Background Images */
+  .country-image {
+    background-image: var(--bg-image);
+  }
+  
+  /* Scrollbar Hide */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
