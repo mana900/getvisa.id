@@ -75,33 +75,22 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 async function getPost(slug: string): Promise<BlogPost | null> {
   try {
-    // In development, use direct database query to avoid SSR issues
-    if (process.env.NODE_ENV === 'development') {
-      const { supabase } = await import('@/lib/supabase')
-      const { data: post, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', slug)
-        .eq('status', 'published')
-        .single()
+    // Use direct database query for both development and production
+    // This avoids API route issues and is more efficient for SSG/SSR
+    const { supabase } = await import('@/lib/supabase')
+    const { data: post, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .single()
 
-      if (error) {
-        console.error('Error fetching post from Supabase:', error)
-        return null
-      }
-
-      return post
-    }
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/blog/posts/slug/${slug}`, {
-      next: { revalidate: 60 }
-    })
-    
-    if (!response.ok) {
+    if (error) {
+      console.error('Error fetching post from Supabase:', error)
       return null
     }
-    
-    return await response.json()
+
+    return post
   } catch (error) {
     console.error('Error fetching post:', error)
     return null
