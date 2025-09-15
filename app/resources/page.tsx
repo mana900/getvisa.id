@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -180,10 +181,13 @@ export default function ResourcesPage() {
                     <Link href={`/resources/${post.slug}`}>
                       {post.featured_image_url && (
                         <div className="aspect-video relative overflow-hidden rounded-t-lg">
-                          <img
+                          <Image
                             src={post.featured_image_url}
                             alt={post.featured_image_alt || post.title}
-                            className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority={false}
                           />
                         </div>
                       )}

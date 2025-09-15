@@ -1,6 +1,17 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Font optimization */
+@font-face {
+  font-family: 'Geist Sans';
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';  
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

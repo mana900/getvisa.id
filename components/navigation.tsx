@@ -89,21 +89,13 @@ export default function Navigation() {
               </div>
             </>
           ) : (
-            <>
-              <Link 
-                href="/auth/login"
-                className="hidden md:inline text-gray-700 hover:text-gray-900 font-medium"
-              >
-                Sign in
-              </Link>
-              <button
-                onClick={toggleMobileMenu}
-                className="md:hidden p-2 text-gray-700 hover:text-gray-900"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </>
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 text-gray-700 hover:text-gray-900"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           )}
         </div>
       </nav>
@@ -164,19 +156,6 @@ export default function Navigation() {
                   About
                 </Link>
               </div>
-              
-              {/* Bottom Sign In */}
-              {!user && (
-                <div className="p-6 border-t border-gray-100">
-                  <Link 
-                    href="/auth/login"
-                    className="block w-full px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 text-center transition-colors font-medium"
-                    onClick={toggleMobileMenu}
-                  >
-                    Sign in
-                  </Link>
-                </div>
-              )}
             </div>
           </div>
         </div>

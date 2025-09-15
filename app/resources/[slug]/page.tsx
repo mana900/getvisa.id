@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -211,10 +212,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {/* Featured Image */}
             {post.featured_image_url && (
               <div className="aspect-video relative overflow-hidden rounded-lg mb-8">
-                <img
+                <Image
                   src={post.featured_image_url}
                   alt={post.featured_image_alt || post.title}
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  priority={false}
                 />
               </div>
             )}
