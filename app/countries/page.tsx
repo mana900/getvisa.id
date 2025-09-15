@@ -166,12 +166,27 @@ export default function CountriesPage() {
   useEffect(() => {
     async function fetchCountries() {
       try {
-        const countriesData = await VisaService.getCountriesWithVisas()
-        // Filter only countries with active visas
-        const activeCountries = countriesData.filter(country => country.activeCount > 0)
-        setCountries(activeCountries)
+        const response = await fetch('/api/countries')
+        if (response.ok) {
+          const data = await response.json()
+          setCountries(data.countries)
+        } else {
+          console.error('Failed to fetch countries from database, falling back to service')
+          // Fallback to existing service
+          const countriesData = await VisaService.getCountriesWithVisas()
+          const activeCountries = countriesData.filter(country => country.activeCount > 0)
+          setCountries(activeCountries)
+        }
       } catch (error) {
         console.error('Error fetching countries:', error)
+        // Fallback to existing service
+        try {
+          const countriesData = await VisaService.getCountriesWithVisas()
+          const activeCountries = countriesData.filter(country => country.activeCount > 0)
+          setCountries(activeCountries)
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -249,7 +264,7 @@ export default function CountriesPage() {
                   <div
                     className="absolute inset-0 bg-cover bg-center country-image"
                     style={{ 
-                      '--bg-image': `url(${getCountryImage(country.countryCode, country.country)})`,
+                      '--bg-image': `url(${country.image || getCountryImage(country.countryCode, country.country)})`,
                     } as React.CSSProperties}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -278,7 +293,7 @@ export default function CountriesPage() {
                   </div>
                   
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    Professional visa processing services for {country.country}. Multiple visa types available with expert guidance.
+                    {country.description || `Professional visa processing services for ${country.country}. Multiple visa types available with expert guidance.`}
                   </p>
 
                   {/* Info Grid */}

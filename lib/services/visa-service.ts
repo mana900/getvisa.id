@@ -38,22 +38,29 @@ export class VisaService {
   // Get visa types by country
   static async getVisaTypesByCountry(countryCode: string): Promise<VisaType[]> {
     try {
-      const response = await fetch('/api/admin/visa-types')
-      const result = await response.json()
+      // Use getAllVisaTypes which we know works, then filter
+      const allVisas = await this.getAllVisaTypes()
       
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch visa types')
+      if (!allVisas || allVisas.length === 0) {
+        const response = await fetch('/api/admin/visa-types')
+        if (!response.ok) {
+          throw new Error('Failed to fetch visa types')
+        }
+        const result = await response.json()
+        const filteredVisas = result.filter((visa: VisaType) => 
+          visa.country_code === countryCode && visa.is_active
+        )
+        return filteredVisas || []
       }
       
-      // Filter by country code and active status
-      const filteredVisas = result.filter((visa: VisaType) => 
+      // Filter the visas by country code and active status
+      const filteredVisas = allVisas.filter((visa: VisaType) => 
         visa.country_code === countryCode && visa.is_active
       )
-      
-      return filteredVisas || []
+      return filteredVisas
     } catch (error) {
-      console.error('Error fetching visa types by country:', error)
-      throw new Error('Failed to fetch visa types by country')
+      console.error('Error in getVisaTypesByCountry:', error)
+      return []
     }
   }
 

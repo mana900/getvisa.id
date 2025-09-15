@@ -55,6 +55,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
     if (searchFilters?.destination) {
       filtered = filtered.filter(
         (visa) =>
+          visa.country_code.toLowerCase() === searchFilters.destination!.toLowerCase() ||
           visa.country.toLowerCase().includes(searchFilters.destination!.toLowerCase())
       )
     }

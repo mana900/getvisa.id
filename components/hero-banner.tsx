@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { CountrySelect } from "@/components/ui/country-select"
 import { Search, Globe } from "lucide-react"
 import { trackVisaSearch } from "@/lib/gtag"
 
@@ -60,44 +60,38 @@ export default function HeroBanner({ onSearchChange }: HeroBannerProps) {
   }
 
   return (
-    <div className="relative rounded-3xl mx-6 mb-6 overflow-hidden">
+    <div className="relative rounded-3xl mx-4 md:mx-6 mb-6 overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-hero-canyon"></div>
       <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
-      <div className="relative z-10 px-12 py-32 text-center text-white">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+      <div className="relative z-10 px-4 md:px-12 py-16 md:py-32 text-center text-white">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">
           Simplifying visas for
           <br />
           Indonesians Everywhere
         </h1>
-        <p className="text-lg mb-12 opacity-90">Fast, reliable, and hassle-free visa services for 100+ destinations.</p>
+        <p className="text-base md:text-lg mb-8 md:mb-12 opacity-90 px-2 md:px-0">
+          Fast, reliable, and hassle-free visa services for 100+ destinations.
+        </p>
 
         {/* Search Form */}
-        <div className="bg-white rounded-2xl p-6 max-w-2xl mx-auto">
-          <div className="flex gap-4 items-end">
+        <div className="bg-white rounded-2xl p-4 md:p-6 max-w-2xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-4 md:items-end">
             <div className="flex-1 space-y-2">
               <label className="flex items-center text-gray-700 text-sm font-medium">
                 <Globe className="w-4 h-4 mr-2" />
                 Your Destination
               </label>
-              <Select value={destination} onValueChange={handleDestinationChange}>
-                <SelectTrigger className="bg-gray-50 border-0 w-full text-gray-900">
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="canada">Canada</SelectItem>
-                  <SelectItem value="thailand">Thailand</SelectItem>
-                  <SelectItem value="uk">United Kingdom</SelectItem>
-                  <SelectItem value="usa">United States</SelectItem>
-                  <SelectItem value="australia">Australia</SelectItem>
-                  <SelectItem value="japan">Japan</SelectItem>
-                  <SelectItem value="germany">Germany</SelectItem>
-                  <SelectItem value="france">France</SelectItem>
-                  <SelectItem value="italy">Italy</SelectItem>
-                  <SelectItem value="spain">Spain</SelectItem>
-                </SelectContent>
-              </Select>
+              <CountrySelect
+                value={destination}
+                onValueChange={handleDestinationChange}
+                placeholder="Select country"
+                triggerClassName="bg-gray-50 border-0 w-full text-gray-900 h-12"
+              />
             </div>
-            <Button onClick={handleSearch} className="bg-black hover:bg-gray-800 text-white h-12 px-8">
+            <Button 
+              onClick={handleSearch} 
+              className="bg-black hover:bg-gray-800 text-white h-12 px-6 md:px-8 w-full md:w-auto"
+            >
               <Search className="w-5 h-5 mr-2" />
               Find visa
             </Button>

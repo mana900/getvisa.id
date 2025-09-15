@@ -22,6 +22,7 @@ export default function CountryVisaPage() {
   const [countryInfo, setCountryInfo] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+
   // Helper function to calculate completion date
   const calculateCompletionDate = (days: string | number) => {
     if (!days) return null
@@ -44,18 +45,13 @@ export default function CountryVisaPage() {
   useEffect(() => {
     const fetchCountryData = async () => {
       try {
-        console.log('Fetching data for country:', country)
-        
         // Get visa types for this country
         const visas = await VisaService.getVisaTypesByCountry(country)
-        console.log('Found visas for', country, ':', visas)
         setCountryVisas(visas)
 
         // Get country info from countries with visas
         const countries = await VisaService.getCountriesWithVisas()
-        console.log('All countries:', countries)
         const info = countries.find(c => c.countryCode === country)
-        console.log('Country info for', country, ':', info)
         setCountryInfo(info)
       } catch (error) {
         console.error('Error fetching country data:', error)
@@ -69,23 +65,36 @@ export default function CountryVisaPage() {
     }
   }, [country])
 
-  if (loading) {
+  // Early return for debugging
+  if (!country) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading visa options...</p>
+          <h1 className="text-2xl font-bold mb-4">No country parameter</h1>
+          <p className="text-gray-600">Country: {String(country)}</p>
         </div>
       </div>
     )
   }
 
-  if (!countryInfo || countryVisas.length === 0) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">No visas found</h1>
-          <p className="text-gray-600 mb-4">No visa types are available for this country.</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading visa options for {country}...</p>
+          <p className="text-xs text-gray-400 mt-2">Visas: {countryVisas.length}, Country info: {!!countryInfo ? 'found' : 'not found'}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!loading && (!countryInfo || countryVisas.length === 0)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">No visas found for {country?.toUpperCase()}</h1>
+          <p className="text-gray-600 mb-4">We don't have any visa types available for this country yet.</p>
           <Button onClick={() => router.push("/")}>Return Home</Button>
         </div>
       </div>

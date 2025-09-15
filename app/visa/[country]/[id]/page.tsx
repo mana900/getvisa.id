@@ -19,7 +19,9 @@ import {
   trackPriceView,
   trackProcessingTimeView,
   trackBackButtonClick,
-  trackWhatsAppMessageSent
+  trackWhatsAppMessageSent,
+  trackLeadGeneration,
+  trackConversionFormSubmit
 } from "@/lib/gtag"
 import VisaPageAnalytics from "@/components/VisaPageAnalytics"
 
@@ -39,6 +41,10 @@ export default function VisaDetailPage() {
   const [userPhone, setUserPhone] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [leadId, setLeadId] = useState<number | null>(null)
+  
+  // Mobile drawer states
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isDrawerAnimating, setIsDrawerAnimating] = useState(false)
 
   // Helper function to calculate completion date
   const calculateCompletionDate = (days: string | number) => {
@@ -88,6 +94,26 @@ export default function VisaDetailPage() {
       if (response.ok) {
         setLeadId(result.leadId)
         
+        // 🎯 CONVERSION TRACKING - Track lead generation conversion immediately after successful form submission
+        if (result.leadId && visa?.country && visa?.visa_type && visa?.price) {
+          // Track GA4 standard generate_lead conversion event
+          trackLeadGeneration(
+            visa.country,
+            visa.visa_type, 
+            visa.price,
+            result.leadId.toString()
+          )
+          
+          // Track custom form submission conversion
+          trackConversionFormSubmit(
+            visa.country,
+            visa.visa_type,
+            visa.price,
+            userName.trim(),
+            result.leadId.toString()
+          )
+        }
+        
         // Track the WhatsApp click
         if (result.leadId) {
           await fetch(`/api/contact-leads/${result.leadId}/whatsapp`, {
@@ -101,8 +127,14 @@ export default function VisaDetailPage() {
         // Open WhatsApp
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(personalizedMessage)}`
         
-        // Track analytics
-        trackContactConsultantClick(visa?.country || '', visa?.visa_type || '', 'whatsapp')
+        // Track existing analytics with enhanced parameters for better attribution
+        trackContactConsultantClick(
+          visa?.country || '', 
+          visa?.visa_type || '', 
+          'whatsapp',
+          visa?.price,
+          result.leadId?.toString()
+        )
         trackWhatsAppMessageSent(visa?.country || '', visa?.visa_type || '')
         
         // Open WhatsApp in new tab
@@ -121,6 +153,41 @@ export default function VisaDetailPage() {
 
   // Check if form is valid
   const isFormValid = userName.trim().length > 0 && userPhone.trim().length > 0
+
+  // Toggle drawer
+  const toggleDrawer = () => {
+    if (isDrawerOpen) {
+      setIsDrawerAnimating(true)
+      setTimeout(() => {
+        setIsDrawerOpen(false)
+        setIsDrawerAnimating(false)
+      }, 300)
+    } else {
+      setIsDrawerOpen(true)
+    }
+  }
+
+  // Handle drawer form submission
+  const handleDrawerSubmit = async () => {
+    await handleContactSubmit()
+    // Close drawer after successful submission
+    if (isFormValid) {
+      toggleDrawer()
+    }
+  }
+
+  // Handle body scroll lock for drawer
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isDrawerOpen])
 
   // Fetch visa data and settings from database
   useEffect(() => {
@@ -192,7 +259,7 @@ export default function VisaDetailPage() {
       
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
           <Link href={`/visa/${country}`}>
             <Button 
               variant="ghost" 
@@ -204,7 +271,43 @@ export default function VisaDetailPage() {
             </Button>
           </Link>
 
-          <div className="flex items-center gap-4">
+          {/* Mobile Layout */}
+          <div className="md:hidden">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
+                {visa.flag}
+              </div>
+              <div className="flex-1">
+                <h1 className="text-xl font-bold leading-tight">
+                  {visa.country} - {visa.visa_type}
+                </h1>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center justify-center gap-1 text-gray-600 mb-1">
+                  <Clock className="w-3 h-3" />
+                </div>
+                <div className="text-xs text-gray-600">Processing</div>
+                <div className="text-sm font-semibold">{visa.processing_time}</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="flex items-center justify-center gap-1 text-gray-600 mb-1">
+                  <Calendar className="w-3 h-3" />
+                </div>
+                <div className="text-xs text-gray-600">Duration</div>
+                <div className="text-sm font-semibold">{visa.duration}</div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-3">
+                <div className="text-xs text-green-600 mb-1">Price</div>
+                <div className="text-lg font-bold text-green-600">{formatIDR(visa.price)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden md:flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-4xl">
               {visa.flag}
             </div>
@@ -228,7 +331,7 @@ export default function VisaDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-16 pb-24 md:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -407,6 +510,146 @@ export default function VisaDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Bottom Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-50 safe-area-inset-bottom">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="text-lg font-bold text-green-600">{formatIDR(visa.price)}</div>
+            <div className="text-xs text-gray-500">{visa.processing_time}</div>
+          </div>
+          <Button 
+            onClick={toggleDrawer}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+          >
+            Apply Now
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      {(isDrawerOpen || isDrawerAnimating) && (
+        <div className="md:hidden fixed inset-0 z-50">
+          <div 
+            className={`fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+              isDrawerOpen && !isDrawerAnimating ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={toggleDrawer} 
+          />
+          <div className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300 ease-in-out max-h-[85vh] ${
+            isDrawerOpen && !isDrawerAnimating ? 'translate-y-0' : 'translate-y-full'
+          }`}>
+            <div className="flex flex-col h-full">
+              {/* Drawer Handle */}
+              <div className="flex justify-center py-4">
+                <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+              </div>
+              
+              {/* Drawer Header */}
+              <div className="px-6 pb-4 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
+                    {visa.flag}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg">{visa.country} - {visa.visa_type}</h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span>{visa.processing_time}</span>
+                      <span>•</span>
+                      <span className="font-bold text-green-600">{formatIDR(visa.price)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Drawer Content */}
+              <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+                <div className="text-center">
+                  <h4 className="text-lg font-semibold mb-2">Quick Application</h4>
+                  <p className="text-sm text-gray-600">Get started by providing your details below</p>
+                </div>
+
+                {/* Contact Form */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="drawer-name" className="text-sm font-medium text-gray-700">
+                      Full Name *
+                    </Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="drawer-name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        className="pl-10"
+                      />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="drawer-phone" className="text-sm font-medium text-gray-700">
+                      Phone Number *
+                    </Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="drawer-phone"
+                        type="tel"
+                        placeholder="+62 812 3456 7890"
+                        value={userPhone}
+                        onChange={(e) => setUserPhone(e.target.value)}
+                        className="pl-10"
+                      />
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary */}
+                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Processing Time</span>
+                    <span className="font-medium">{visa.processing_time}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Duration</span>
+                    <span className="font-medium">{visa.duration}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Validity</span>
+                    <span className="font-medium">{visa.validity}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Drawer Footer */}
+              <div className="p-6 pb-8 border-t border-gray-100">
+                <Button 
+                  onClick={handleDrawerSubmit}
+                  disabled={!isFormValid || isSubmitting}
+                  className={`w-full py-4 rounded-xl font-medium transition-colors ${
+                    isFormValid 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isSubmitting ? 'Connecting...' : 'Contact Consultant'}
+                </Button>
+                
+                {!isFormValid && (
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    Please enter your name and phone number to continue
+                  </p>
+                )}
+                
+                {/* Safari bottom padding for home indicator */}
+                <div className="h-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

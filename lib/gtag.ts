@@ -100,12 +100,30 @@ export const trackApplyNowClick = (country: string, visaType: string, price: num
   })
 }
 
-export const trackContactConsultantClick = (country: string, visaType: string, method: 'whatsapp' | 'phone' | 'email' = 'whatsapp') => {
-  event({
-    action: 'contact_consultant',
-    category: 'lead_generation',
-    label: `${country}:${visaType}:${method}`,
-  })
+export const trackContactConsultantClick = (
+  country: string, 
+  visaType: string, 
+  method: 'whatsapp' | 'phone' | 'email' = 'whatsapp',
+  price?: number,
+  leadId?: string
+) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    // Enhanced tracking with conversion attribution
+    window.gtag('event', 'contact_consultant', {
+      event_category: 'lead_generation',
+      event_label: `${country}:${visaType}:${method}`,
+      value: price || 0,
+      currency: price ? 'IDR' : undefined,
+      custom_parameters: {
+        contact_method: method,
+        visa_country: country,
+        visa_type: visaType,
+        visa_price: price,
+        lead_id: leadId,
+        conversion_stage: 'whatsapp_redirect'
+      }
+    })
+  }
 }
 
 export const trackPriceView = (country: string, visaType: string, price: number) => {
@@ -171,4 +189,78 @@ export const trackWhatsAppMessageSent = (country: string, visaType: string) => {
     category: 'lead_generation',
     label: `${country}:${visaType}`,
   })
+}
+
+// GA4 Standard Conversion Events for Lead Generation
+// 
+// 🎯 SETUP INSTRUCTIONS FOR GOOGLE ANALYTICS 4:
+// 1. In GA4, go to Admin > Events > Create Event
+// 2. Mark 'generate_lead' and 'submit_lead_form' as conversion events
+// 3. Set up conversion goals with these events for proper attribution
+// 4. These events include currency and value for ROI tracking
+//
+export const trackLeadGeneration = (
+  country: string, 
+  visaType: string, 
+  price: number, 
+  leadId: string,
+  currency: string = 'IDR'
+) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    const eventData = {
+      currency: currency,
+      value: price,
+      content_id: leadId,
+      content_category: 'visa_application',
+      content_type: 'lead_form',
+      item_id: `${country.toLowerCase()}_${visaType.replace(/\s+/g, '_').toLowerCase()}`,
+      item_name: `${visaType} - ${country}`,
+      item_category: 'visa_services',
+      country: country,
+      visa_type: visaType,
+      lead_source: 'visa_detail_page',
+      method: 'contact_form'
+    }
+    
+    // Send GA4 generate_lead event (standard conversion event)
+    window.gtag('event', 'generate_lead', eventData)
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 GA4 Conversion: generate_lead', eventData)
+    }
+  }
+}
+
+export const trackConversionFormSubmit = (
+  country: string,
+  visaType: string, 
+  price: number,
+  userName: string,
+  leadId?: string
+) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    const eventData = {
+      event_category: 'conversion',
+      event_label: `${country}:${visaType}`,
+      value: price,
+      currency: 'IDR',
+      custom_parameters: {
+        visa_country: country,
+        visa_type: visaType,
+        visa_price: price,
+        lead_id: leadId,
+        user_provided_name: !!userName,
+        conversion_stage: 'form_completed'
+      }
+    }
+    
+    // Send custom conversion event for form submission
+    window.gtag('event', 'submit_lead_form', eventData)
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 GA4 Conversion: submit_lead_form', eventData)
+    }
+  }
 }

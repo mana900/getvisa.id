@@ -11,7 +11,9 @@
     "setup-db": "npx ts-node scripts/setup-database.ts",
     "deploy-schema": "npx ts-node scripts/deploy-schema.ts",
     "fix-blog-slugs": "npx ts-node scripts/fix-blog-slugs.ts",
-    "setup-testimonials": "npx ts-node scripts/setup-testimonials.ts"
+    "setup-testimonials": "npx ts-node scripts/setup-testimonials.ts",
+    "setup-countries": "npx ts-node scripts/setup-countries.ts",
+    "load-all-countries": "echo 'Run the SQL file: sql/countries-comprehensive.sql in your Supabase dashboard to load all countries with descriptions and images.'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
