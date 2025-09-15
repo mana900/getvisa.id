@@ -20,12 +20,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { useSupabaseAuth } from "@/components/supabase-auth-provider"
 import ProtectedRoute from "@/components/protected-route"
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "sonner"
 
 const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Documents", href: "/admin/documents", icon: FileText },
-  { name: "Visa Types", href: "/admin/visa-types", icon: Globe },
+  { name: "Countries", href: "/admin/countries", icon: Globe },
+  { name: "Visa Types", href: "/admin/visa-types", icon: FileText },
   { name: "Blog Posts", href: "/admin/blog/posts", icon: BookOpen },
   { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
   { name: "Contact Leads", href: "/admin/contact-leads", icon: Contact },

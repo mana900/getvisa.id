@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Contact, Phone, User, Globe, MessageSquare, Calendar, CheckCircle, Clock } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
+import { Contact, Phone, User, Globe, MessageSquare, Calendar, CheckCircle, Clock, Trash2, Download, AlertCircle } from "lucide-react"
 
 interface ContactLead {
   id: number
@@ -28,6 +31,8 @@ export default function ContactLeadsPage() {
     whatsappClicked: 0,
     conversionRate: 0
   })
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [isExporting, setIsExporting] = useState(false)
 
   const fetchLeads = async () => {
     try {
@@ -47,6 +52,60 @@ export default function ContactLeadsPage() {
       console.error('Error fetching leads:', error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/admin/contact-leads?id=${id}`, {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete lead')
+      }
+      
+      // Refresh the leads list
+      await fetchLeads()
+      toast.success('Contact lead deleted successfully')
+    } catch (error) {
+      console.error('Error deleting lead:', error)
+      toast.error('Failed to delete contact lead')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const handleExport = async (format: 'csv' = 'csv') => {
+    setIsExporting(true)
+    try {
+      const response = await fetch(`/api/admin/contact-leads/export?format=${format}`)
+      
+      if (!response.ok) {
+        throw new Error('Failed to export leads')
+      }
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      
+      const timestamp = new Date().toISOString().split('T')[0]
+      link.download = `contact-leads-${timestamp}.${format}`
+      
+      document.body.appendChild(link)
+      link.click()
+      
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      
+      toast.success(`Contact leads exported as ${format.toUpperCase()}`)
+    } catch (error) {
+      console.error('Error exporting leads:', error)
+      toast.error('Failed to export contact leads')
+    } finally {
+      setIsExporting(false)
     }
   }
 
@@ -92,6 +151,16 @@ export default function ContactLeadsPage() {
           <p className="text-gray-600 mt-1">
             Manage customer contact information from visa detail pages
           </p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => handleExport('csv')}
+            disabled={isExporting || leads.length === 0}
+            variant="outline"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {isExporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
         </div>
       </div>
 
@@ -161,6 +230,7 @@ export default function ContactLeadsPage() {
                     <th className="pb-2 font-medium text-gray-900">Price</th>
                     <th className="pb-2 font-medium text-gray-900">Status</th>
                     <th className="pb-2 font-medium text-gray-900">Date</th>
+                    <th className="pb-2 font-medium text-gray-900">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,6 +283,38 @@ export default function ContactLeadsPage() {
                             WhatsApp: {formatDate(lead.whatsapp_clicked_at)}
                           </div>
                         )}
+                      </td>
+                      <td className="py-4">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              disabled={deletingId === lead.id}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Contact Lead</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete the contact lead from <strong>{lead.name}</strong>? 
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => handleDelete(lead.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </td>
                     </tr>
                   ))}

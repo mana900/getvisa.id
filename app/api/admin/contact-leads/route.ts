@@ -52,3 +52,42 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = getSupabaseAdmin()
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Lead ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('contact_leads')
+      .delete()
+      .eq('id', parseInt(id))
+
+    if (error) {
+      console.error('Error deleting contact lead:', error)
+      return NextResponse.json(
+        { error: 'Failed to delete contact lead' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'Contact lead deleted successfully' 
+    })
+  } catch (error) {
+    console.error('Error in contact leads DELETE:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
