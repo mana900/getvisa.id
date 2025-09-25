@@ -422,26 +422,28 @@ export default function VisaDetailPage() {
               </ul>
             </section>
 
-            {/* Application Timeline */}
-            <section>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Timeline</h2>
-              <div className="space-y-6">
-                {visa.timeline?.map((step, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        {index + 1}
+            {/* Application Timeline - Only show if timeline exists and has entries */}
+            {visa.timeline && visa.timeline.length > 0 && (
+              <section>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Timeline</h2>
+                <div className="space-y-6">
+                  {visa.timeline.map((step, index) => (
+                    <div key={index} className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          {index + 1}
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{step.step}</h3>
+                        <p className="text-sm text-gray-600 mb-1">{step.time}</p>
+                        <p className="text-gray-700">{step.description}</p>
                       </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{step.step}</h3>
-                      <p className="text-sm text-gray-600 mb-1">{step.time}</p>
-                      <p className="text-gray-700">{step.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Required Documents */}
             <section>
@@ -516,18 +518,20 @@ export default function VisaDetailPage() {
                   </div>
                 </div>
 
-                <Button 
+
+
+                <Button
                   onClick={handleContactSubmit}
                   disabled={!isFormValid || isSubmitting}
                   className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
-                    isFormValid 
-                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                    isFormValid
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >
                   {isSubmitting ? 'Connecting...' : 'Contact Consultant'}
                 </Button>
-                
+
                 {!isFormValid && (
                   <p className="text-xs text-gray-500 mt-2">
                     Please enter your name and phone number to continue
@@ -548,6 +552,26 @@ export default function VisaDetailPage() {
                   <span className="text-gray-600">Processing Time</span>
                   <span className="font-semibold">{visa.processing_time}</span>
                 </div>
+
+               {/* Money-back Policy */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">We have a money-back policy</h4>
+                      <p className="text-xs text-gray-600 leading-relaxed">
+              If your visa application is unsuccessful, we’ll refund 100% of your money. 
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+
+
               </div>
             </div>
           </div>
@@ -666,9 +690,9 @@ export default function VisaDetailPage() {
                 </div>
               </div>
 
-              {/* Drawer Footer */}
-              <div className="p-6 pb-8 border-t border-gray-100">
-                <Button 
+
+
+                <Button
                   onClick={handleDrawerSubmit}
                   disabled={!isFormValid || isSubmitting}
                   className={`w-full py-4 rounded-xl font-medium transition-colors ${
@@ -685,6 +709,29 @@ export default function VisaDetailPage() {
                     Please enter your name and phone number to continue
                   </p>
                 )}
+
+              {/* Drawer Footer */}
+              <div className="p-6 pb-8 border-t border-gray-100">
+                {/* Money-back Policy */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">We have a money-back policy</h4>
+                      <p className="text-xs text-gray-600 leading-relaxed">
+If your visa application is unsuccessful, we’ll refund 100% of your money.                 </p>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
                 
                 {/* Safari bottom padding for home indicator */}
                 <div className="h-6"></div>
