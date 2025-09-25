@@ -70,7 +70,7 @@ function VisaCard({ visa, toggleVisaStatus, deleteVisa, updateSortOrder }: VisaC
             <p className="font-semibold">{visa.processing_time}</p>
           </div>
           <div>
-            <p className="text-gray-600">Duration</p>
+            <p className="text-gray-600">Stay Duration</p>
             <p className="font-semibold">{visa.duration}</p>
           </div>
           <div>

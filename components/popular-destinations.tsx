@@ -167,7 +167,7 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                       <div className="flex items-start justify-between text-sm">
                         <div className="flex items-center text-gray-600">
                           <Calendar className="w-4 h-4 mr-2" />
-                          <span>Duration</span>
+                          <span>Stay Duration</span>
                         </div>
                         <span className="font-medium text-gray-900 text-right ml-2">{visa.duration}</span>
                       </div>

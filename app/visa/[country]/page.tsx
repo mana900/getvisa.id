@@ -185,7 +185,7 @@ export default function CountryVisaPage() {
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center text-gray-600">
                     <Calendar className="w-4 h-4 mr-2" />
-                    <span>Duration</span>
+                    <span>Stay Duration</span>
                   </div>
                   <span className="font-medium text-gray-900">{visa.duration}</span>
                 </div>
