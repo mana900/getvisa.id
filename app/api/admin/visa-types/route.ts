@@ -21,6 +21,7 @@ export async function GET() {
       .from('visa_types')
       .select('*')
       .order('country', { ascending: true })
+      .order('display_order', { ascending: true })
 
     if (error) {
       console.error('Error fetching visa types:', error)

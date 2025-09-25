@@ -9,10 +9,108 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { VisaService } from "@/lib/services/visa-service"
-import { Search, Plus, Edit, Trash2, Eye, ChevronDown, ChevronRight } from "lucide-react"
+import { Search, Plus, Edit, Trash2, Eye, ChevronDown, ChevronRight, GripVertical } from "lucide-react"
 import { formatIDR } from "@/lib/utils/currency"
 import { useToast } from "@/hooks/use-toast"
 import { ToastContainer } from "@/components/toast-container"
+// Removed drag and drop imports - using simple sort order input instead
+
+// Visa card component with sort order input
+interface VisaCardProps {
+  visa: any
+  toggleVisaStatus: (id: string) => Promise<void>
+  deleteVisa: (id: string) => Promise<void>
+  updateSortOrder: (id: string, order: number) => Promise<void>
+}
+
+function VisaCard({ visa, toggleVisaStatus, deleteVisa, updateSortOrder }: VisaCardProps) {
+  const handleSortOrderChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newOrder = parseInt(e.target.value) || 1
+    await updateSortOrder(visa.id, newOrder)
+  }
+
+  return (
+    <Card className="border border-gray-200">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="flex flex-col items-center">
+              <span className="text-xs text-gray-500 mb-1">Sort</span>
+              <Input
+                type="number"
+                value={visa.display_order || 1}
+                onChange={handleSortOrderChange}
+                className="w-16 text-center text-sm"
+                min="1"
+              />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">{visa.visa_type}</h4>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={visa.is_active}
+                  onCheckedChange={() => toggleVisaStatus(visa.id)}
+                  size="sm"
+                />
+                <Badge variant={visa.is_active ? "default" : "secondary"} className="text-xs">
+                  {visa.is_active ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
+          <div>
+            <p className="text-gray-600">Price</p>
+            <p className="font-semibold text-green-600">{formatIDR(visa.price)}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Processing</p>
+            <p className="font-semibold">{visa.processing_time}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Duration</p>
+            <p className="font-semibold">{visa.duration}</p>
+          </div>
+          <div>
+            <p className="text-gray-600">Validity</p>
+            <p className="font-semibold">{visa.validity}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-3 border-t">
+          <div className="flex items-center space-x-2">
+            <Link href={`/admin/visa-types/${visa.id}`}>
+              <Button variant="outline" size="sm">
+                <Eye className="w-3 h-3 mr-1" />
+                View
+              </Button>
+            </Link>
+            <Link href={`/admin/visa-types/${visa.id}/edit`}>
+              <Button variant="outline" size="sm">
+                <Edit className="w-3 h-3 mr-1" />
+                Edit
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => deleteVisa(visa.id)}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="w-3 h-3 mr-1" />
+              Delete
+            </Button>
+          </div>
+          <div className="text-xs text-gray-500">
+            Updated {visa.updated_at ? new Date(visa.updated_at).toLocaleDateString() : 'N/A'}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function VisaTypesPage() {
   const { toasts, showToast, removeToast } = useToast()
@@ -21,18 +119,38 @@ export default function VisaTypesPage() {
   const [expandedCountries, setExpandedCountries] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Load visa types from Supabase
-  useEffect(() => {
-    const loadVisaTypes = async () => {
-      try {
-        const visas = await VisaService.getAllVisaTypes()
-        setAllVisaTypes(visas)
-      } catch (error) {
-        console.error('Error loading visa types:', error)
-      } finally {
-        setLoading(false)
-      }
+  // Update sort order function
+  const updateSortOrder = async (id: string, newOrder: number) => {
+    try {
+      await VisaService.updateVisaType(id, { display_order: newOrder })
+      setAllVisaTypes(prev =>
+        prev.map(v =>
+          v.id === id
+            ? { ...v, display_order: newOrder }
+            : v
+        )
+      )
+      showToast('Sort order updated successfully', 'success')
+    } catch (error) {
+      console.error('Error updating sort order:', error)
+      showToast('Error updating sort order', 'error')
     }
+  }
+
+  // Load visa types from Supabase
+  const loadVisaTypes = async () => {
+    try {
+      setLoading(true)
+      const visas = await VisaService.getAllVisaTypes()
+      setAllVisaTypes(visas)
+    } catch (error) {
+      console.error('Error loading visa types:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     loadVisaTypes()
   }, [])
 
@@ -60,7 +178,7 @@ export default function VisaTypesPage() {
     visa.visa_type.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  // Group filtered visas by country
+  // Group filtered visas by country and sort by display_order
   const groupedVisas = filteredVisaTypes.reduce((acc, visa) => {
     if (!acc[visa.country_code]) {
       acc[visa.country_code] = []
@@ -68,6 +186,11 @@ export default function VisaTypesPage() {
     acc[visa.country_code].push(visa)
     return acc
   }, {} as Record<string, typeof allVisaTypes>)
+
+  // Sort each country's visas by display_order
+  Object.keys(groupedVisas).forEach(countryCode => {
+    groupedVisas[countryCode].sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+  })
 
   const toggleVisaStatus = async (id: string) => {
     try {
@@ -106,12 +229,14 @@ export default function VisaTypesPage() {
   }
 
   const toggleCountryExpansion = (countryCode: string) => {
-    setExpandedCountries(prev => 
+    setExpandedCountries(prev =>
       prev.includes(countryCode)
         ? prev.filter(c => c !== countryCode)
         : [...prev, countryCode]
     )
   }
+
+  // Drag and drop functionality removed - using simple sort order input instead
 
   return (
     <div className="space-y-6">
@@ -193,75 +318,15 @@ export default function VisaTypesPage() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <CardContent className="pt-0">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="space-y-4">
                           {countryVisas.map((visa) => (
-                            <Card key={visa.id} className="border border-gray-200">
-                              <CardContent className="p-4">
-                                <div className="flex items-start justify-between mb-3">
-                                  <div>
-                                    <h4 className="font-semibold text-gray-900 mb-1">{visa.visa_type}</h4>
-                                    <div className="flex items-center space-x-2">
-                                      <Switch
-                                        checked={visa.is_active}
-                                        onCheckedChange={() => toggleVisaStatus(visa.id)}
-                                        size="sm"
-                                      />
-                                      <Badge variant={visa.is_active ? "default" : "secondary"} className="text-xs">
-                                        {visa.is_active ? "Active" : "Inactive"}
-                                      </Badge>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
-                                  <div>
-                                    <p className="text-gray-600">Price</p>
-                                    <p className="font-semibold text-green-600">{formatIDR(visa.price)}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-gray-600">Processing</p>
-                                    <p className="font-semibold">{visa.processing_time}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-gray-600">Duration</p>
-                                    <p className="font-semibold">{visa.duration}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-gray-600">Validity</p>
-                                    <p className="font-semibold">{visa.validity}</p>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center justify-between pt-3 border-t">
-                                  <div className="flex items-center space-x-2">
-                                    <Link href={`/admin/visa-types/${visa.id}`}>
-                                      <Button variant="outline" size="sm">
-                                        <Eye className="w-3 h-3 mr-1" />
-                                        View
-                                      </Button>
-                                    </Link>
-                                    <Link href={`/admin/visa-types/${visa.id}/edit`}>
-                                      <Button variant="outline" size="sm">
-                                        <Edit className="w-3 h-3 mr-1" />
-                                        Edit
-                                      </Button>
-                                    </Link>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="text-red-600 hover:text-red-700 hover:border-red-300"
-                                      onClick={() => deleteVisaType(visa.id, visa.visa_type, visa.country)}
-                                    >
-                                      <Trash2 className="w-3 h-3 mr-1" />
-                                      Delete
-                                    </Button>
-                                  </div>
-                                  <p className="text-xs text-gray-500">
-                                    Updated {new Date(visa.updated_at).toLocaleDateString()}
-                                  </p>
-                                </div>
-                              </CardContent>
-                            </Card>
+                            <VisaCard
+                              key={visa.id}
+                              visa={visa}
+                              toggleVisaStatus={toggleVisaStatus}
+                              deleteVisa={(id) => deleteVisaType(id, visa.visa_type, visa.country)}
+                              updateSortOrder={updateSortOrder}
+                            />
                           ))}
                         </div>
                       </CardContent>
