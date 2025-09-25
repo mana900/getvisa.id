@@ -223,7 +223,7 @@ export default function CountriesPage() {
             </p>
           </div>
           
-          {/* Filter/Search Bar */}
+          {/* Filter/Search Bar
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
             <div className="relative">
               <input
@@ -245,7 +245,9 @@ export default function CountriesPage() {
               <option>Medium</option>
               <option>Hard</option>
             </select>
-          </div>
+          </div> */}
+
+
         </div>
       </section>
 
