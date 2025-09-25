@@ -143,61 +143,43 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                       <span className="text-lg font-bold text-green-600 ml-2">{formatIDR(visa.price)}</span>
                     </div>
 
-                    <p className="text-gray-600 text-xs leading-relaxed mb-4 line-clamp-3">
-                      {visa.overview?.description ?
-                        visa.overview.description.length > 100
-                          ? visa.overview.description.substring(0, 100).replace(/\s+\S*$/, '') + '...'
-                          : visa.overview.description
-                        : 'No description available'}
-                    </p>
+                    <div className="h-16 mb-4">
+                      <p className="text-gray-600 text-xs leading-5 line-clamp-3">
+                        {visa.overview?.description ?
+                          visa.overview.description.length > 150
+                            ? visa.overview.description.substring(0, 150).replace(/\s+\S*$/, '') + '...'
+                            : visa.overview.description
+                          : 'No description available'}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="px-6 pb-4 space-y-3">
-                    <div className="flex items-start justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
-                        <Clock className="w-4 h-4 mr-2" />
-                        <span>Process time</span>
-                      </div>
-                      <span className="font-medium text-gray-900 text-right ml-2">{visa.processing_time}</span>
-                    </div>
-
-                    <div className="flex items-start justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        <span>Duration</span>
-                      </div>
-                      <span className="font-medium text-gray-900 text-right ml-2">{visa.duration}</span>
-                    </div>
-
-                    <div className="flex items-start justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
-                        <FileText className="w-4 h-4 mr-2" />
-                        <span>Validity</span>
-                      </div>
-                      <span className="font-medium text-gray-900 text-right ml-2">{visa.validity}</span>
-                    </div>
-
-                    {visa.documents && visa.documents.length > 0 && (
-                      <div className="pt-3 border-t border-gray-100">
-                        <p className="text-xs font-medium text-gray-700 mb-2">Documents needed:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {visa.documents.slice(0, 3).map((doc, docIndex) => (
-                            <span
-                              key={docIndex}
-                              className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md"
-                            >
-                              {doc}
-                            </span>
-                          ))}
-                          {visa.documents.length > 3 && (
-                            <span className="inline-block px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-md">
-                              +{visa.documents.length - 3} more
-                            </span>
-                          )}
+                  <div className="px-6 pb-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between text-sm">
+                        <div className="flex items-center text-gray-600">
+                          <Clock className="w-4 h-4 mr-2" />
+                          <span>Process time</span>
                         </div>
+                        <span className="font-medium text-gray-900 text-right ml-2">{visa.processing_time}</span>
                       </div>
-                    )}
 
+                      <div className="flex items-start justify-between text-sm">
+                        <div className="flex items-center text-gray-600">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span>Duration</span>
+                        </div>
+                        <span className="font-medium text-gray-900 text-right ml-2">{visa.duration}</span>
+                      </div>
+
+                      <div className="flex items-start justify-between text-sm">
+                        <div className="flex items-center text-gray-600">
+                          <FileText className="w-4 h-4 mr-2" />
+                          <span>Validity</span>
+                        </div>
+                        <span className="font-medium text-gray-900 text-right ml-2">{visa.validity}</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="px-6 pb-6">
