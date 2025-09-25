@@ -6,65 +6,116 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Development server**: `npm run dev` - Starts Next.js development server on http://localhost:3000
 - **Build**: `npm run build` - Creates production build
-- **Linting**:  `npm run lint` - Runs ESLint (note: disabled during builds via next.config.mjs)
+- **Linting**: `npm run lint` - Runs ESLint (note: disabled during builds via next.config.mjs)
 - **Start production**: `npm run start` - Starts production server
 - **Install dependencies**: `npm install` - Install all dependencies from package.json
+- **Database Management**:
+  - `npm run setup-db` - Initialize database schema
+  - `npm run deploy-schema` - Deploy schema changes
+  - `npm run migrate-data` - Run data migrations
+  - `npm run setup-countries` - Setup country data
+  - `npm run setup-testimonials` - Setup testimonials data
 
 ## Architecture Overview
 
-This is a Next.js 14 visa application platform (GetVisa.ID) built with the App Router architecture:
+GetVisa.ID is a comprehensive visa application platform built with Next.js 14 that enables users to find, learn about, and apply for visas through a streamlined WhatsApp-based process.
 
-### Core Structure
-- **App Router**: Uses Next.js 14 App Router with TypeScript
+### Core Technology Stack
+- **Frontend**: Next.js 14 App Router with TypeScript
+- **Backend**: Supabase (PostgreSQL database + Auth + API)
 - **UI Framework**: shadcn/ui components with Radix UI primitives
-- **Styling**: Tailwind CSS with custom configuration, Geist font family
+- **Styling**: Tailwind CSS v4 with Geist font family
 - **Forms**: React Hook Form with Zod validation
-- **Package Manager**: pnpm (preferred)
+- **Analytics**: Comprehensive GA4 conversion tracking
+- **Package Manager**: npm (package-lock.json present)
 
-### Key Directories
-- `app/` - Next.js App Router pages and layouts
-  - `page.tsx` - Landing page with visa search functionality
-  - `dashboard/` - Protected dashboard area with sidebar layout
-  - `visa/[country]/` - Dynamic country-specific visa pages
-- `components/` - Reusable React components
-  - `ui/` - shadcn/ui component library
-  - Custom components: header, footer, partner-logos, etc.
-- `lib/` - Utility functions and configurations
-- `hooks/` - Custom React hooks
-- `public/` - Static assets including country/destination images
+### Application Structure
 
-### Architecture Patterns
-- **Component Structure**: Uses shadcn/ui "New York" style with CSS variables
+#### Public Pages (Main User Flow)
+- `app/page.tsx` - Homepage with visa search and popular destinations
+- `app/visa/[country]/page.tsx` - Country-specific visa listing page
+- `app/visa/[country]/[id]/page.tsx` - Detailed visa application page with contact form
+- `app/auth/` - Authentication pages (login/signup)
+- `app/resources/` - Blog/resource pages
+
+#### Admin Panel (`/admin/*`)
+Complete administrative interface with authentication-protected routes:
+- `app/admin/page.tsx` - Admin dashboard overview
+- `app/admin/visa-types/` - Full CRUD for visa types management
+- `app/admin/countries/` - Country and flag management
+- `app/admin/users/` - User management with role-based access
+- `app/admin/blog/` - Blog post management system
+- `app/admin/testimonials/` - Testimonial management
+- `app/admin/contact-leads/` - Lead management with CSV export functionality
+- `app/admin/documents/` - Document management
+- `app/admin/settings/` - Application settings (WhatsApp numbers, message templates)
+
+#### Dashboard (Currently Unused)
+- `app/dashboard/` - User dashboard area (not actively used in current flow)
+
+### Key Features & User Journey
+
+#### Main Application Flow
+1. **Homepage**: Users search for visas by destination/passport
+2. **Country Selection**: View available visa types for selected country
+3. **Visa Details**: Comprehensive visa information with application form
+4. **Lead Capture**: Collect user contact information with form validation
+5. **WhatsApp Integration**: Redirect to WhatsApp with pre-filled message for application completion
+6. **Analytics Tracking**: Full GA4 conversion funnel tracking
+
+#### Admin Features
+- Complete visa type management (create, edit, delete, activate/deactivate)
+- Country management with flag and description support
+- Contact lead tracking with conversion analytics
+- Blog content management
+- Testimonial management
+- Settings configuration for WhatsApp integration
+- User role management (admin authentication)
+
+### Technical Implementation
+
+#### Component Architecture
+- **shadcn/ui**: "New York" style with CSS variables
+- **Mobile-First Design**: Responsive with drawer/sidebar patterns
+- **Form Handling**: React Hook Form + Zod validation throughout
 - **State Management**: React hooks (useState) for local state
-- **Routing**: File-based routing with dynamic routes for countries
-- **Layout System**: Nested layouts with dashboard having its own sidebar layout
-- **TypeScript**: Strict mode enabled with path aliases (@/* for root)
+- **API Integration**: Custom service classes (VisaService, SettingsService)
 
-### Configuration Notes
-- Build settings: ESLint and TypeScript errors are ignored during builds (next.config.mjs)
-- Image optimization is disabled (`unoptimized: true`) in next.config.mjs
-- Uses custom Tailwind configuration with shadcn/ui integration
-- Component aliases configured for easy imports (@/components, @/lib, etc.) in tsconfig.json
-- shadcn/ui configured with "new-york" style, CSS variables, and Lucide icons
+#### Database & Services
+- **Supabase Integration**: PostgreSQL with real-time capabilities
+- **Service Layer**: `lib/services/` contains business logic
+- **Type Safety**: Full TypeScript with database types
+- **API Routes**: Next.js API routes for data operations
 
-### Dashboard Features
-- Sidebar navigation with mobile responsive design
-- Applications, Documents, and Profile sections
-- User authentication state (currently mock data)
-- File upload functionality for documents
+#### Analytics & Tracking
+- **GA4 Events**: Comprehensive conversion tracking
+- **Lead Tracking**: Form submissions, WhatsApp clicks, page views
+- **Conversion Funnel**: Track user journey from search to application
 
-### Development Workflow
-- Uses **npm** as the package manager (package-lock.json present)
-- Component development follows shadcn/ui patterns with Radix UI primitives
-- Custom components should use the established pattern: functional components with TypeScript
-- State management uses React hooks (no external state library)
-- Mock data is currently used for user authentication (dashboard layout)
+### Mobile Experience
+- **Responsive Design**: Mobile-first approach with breakpoint optimization
+- **Mobile Drawer**: Bottom sheet pattern for visa application forms
+- **Sticky CTAs**: Fixed bottom bars for key actions
+- **Touch Optimized**: Proper touch targets and interactions
 
-### Important Files
+### Configuration Files
 - `next.config.mjs` - Next.js configuration with build optimizations
 - `components.json` - shadcn/ui configuration
-- `app/layout.tsx` - Root layout with Geist font configuration
-- `app/dashboard/layout.tsx` - Dashboard-specific layout with sidebar navigation
-- `lib/utils.ts` - Utility functions (cn function for className merging)
+- `tailwind.config.ts` - Tailwind CSS v4 configuration
+- `tsconfig.json` - TypeScript configuration with path aliases
 
-The codebase follows Next.js 14 App Router conventions with a focus on visa application processing and user document management.
+### Important Notes
+- **Dashboard**: User dashboard exists but is not currently used in the main application flow
+- **WhatsApp Integration**: Primary conversion channel for completing visa applications
+- **Admin Authentication**: Required for admin panel access via Supabase Auth
+- **Mobile Optimization**: Extensive mobile-first design patterns implemented
+- **Analytics Focus**: Heavy emphasis on conversion tracking and lead analytics
+
+### Development Patterns
+- **Component Development**: Follow shadcn/ui patterns with TypeScript
+- **API Development**: Use service layer pattern for business logic
+- **Form Development**: Always use React Hook Form + Zod validation
+- **Mobile Development**: Implement drawer patterns for mobile forms
+- **Analytics**: Include relevant tracking for all user interactions
+
+The codebase prioritizes user experience optimization and conversion tracking, with a focus on the public visa search and application flow rather than traditional user account management.

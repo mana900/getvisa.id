@@ -30,7 +30,7 @@ export default function Navigation() {
     } else {
       document.body.style.overflow = 'unset'
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -41,10 +41,10 @@ export default function Navigation() {
       <nav className="relative z-30 flex items-center justify-between p-6 bg-white">
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center">
-            <Image 
-              src="/TextLogo-GreenCropped.png" 
-              alt="GetVisa.ID Logo" 
-              width={140} 
+            <Image
+              src="/TextLogo-GreenCropped.png"
+              alt="GetVisa.ID Logo"
+              width={140}
               height={40}
               className="h-8 w-auto"
             />
@@ -61,7 +61,7 @@ export default function Navigation() {
             </Link>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           {user ? (
             <>
@@ -78,8 +78,8 @@ export default function Navigation() {
                   <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={signOut}
                   className="text-gray-600 hover:text-gray-900"
@@ -102,11 +102,11 @@ export default function Navigation() {
 
       {(isMobileMenuOpen || isAnimating) && (
         <div className="fixed inset-0 z-20 md:hidden">
-          <div 
+          <div
             className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
               isMobileMenuOpen && !isAnimating ? 'opacity-100' : 'opacity-0'
             }`}
-            onClick={toggleMobileMenu} 
+            onClick={toggleMobileMenu}
           />
           <div className={`fixed top-0 right-0 w-80 h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
             isMobileMenuOpen && !isAnimating ? 'translate-x-0' : 'translate-x-full'
@@ -115,10 +115,10 @@ export default function Navigation() {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-100">
                 <div className="flex items-center">
-                  <Image 
-                    src="/TextLogo-GreenCropped.png" 
-                    alt="GetVisa.ID Logo" 
-                    width={120} 
+                  <Image
+                    src="/TextLogo-GreenCropped.png"
+                    alt="GetVisa.ID Logo"
+                    width={120}
                     height={32}
                     className="h-6 w-auto"
                   />
@@ -131,25 +131,25 @@ export default function Navigation() {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              
+
               {/* Menu Items */}
               <div className="flex flex-col flex-1 p-6 space-y-1">
-                <Link 
-                  href="/countries" 
+                <Link
+                  href="/countries"
                   className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 py-4 px-4 rounded-lg transition-colors text-lg font-medium"
                   onClick={toggleMobileMenu}
                 >
                   Countries
                 </Link>
-                <Link 
-                  href="/resources" 
+                <Link
+                  href="/resources"
                   className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 py-4 px-4 rounded-lg transition-colors text-lg font-medium"
                   onClick={toggleMobileMenu}
                 >
                   Resources
                 </Link>
-                <Link 
-                  href="/about" 
+                <Link
+                  href="/about"
                   className="text-gray-700 hover:text-gray-900 hover:bg-gray-50 py-4 px-4 rounded-lg transition-colors text-lg font-medium"
                   onClick={toggleMobileMenu}
                 >

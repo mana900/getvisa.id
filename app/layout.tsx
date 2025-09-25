@@ -7,7 +7,7 @@ import StructuredData from '@/components/StructuredData'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'GetVisa.ID - Professional Visa Services for Indonesians | Visa Application Platform',
+  title: 'GetVisa.ID - Professional Visa Services for Indonesians',
   description: 'Fast, reliable visa services for 100+ destinations. Expert visa processing, document guidance, and embassy support for Indonesian travelers. 99% success rate.',
   generator: 'Next.js',
   metadataBase: new URL('https://getvisa.id'),

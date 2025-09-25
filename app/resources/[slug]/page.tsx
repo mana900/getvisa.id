@@ -8,7 +8,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
 import BlogAnalytics from '@/components/BlogAnalytics'
-import { ArrowLeft, Calendar, Clock, Share2, MessageCircle } from 'lucide-react'
+import BlogCTA from '@/components/blog-cta'
+import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react'
 
 interface BlogPost {
   id: string
@@ -259,27 +260,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 </div>
               )}
 
-              {/* CTA Section */}
-              <Card className="mt-16 bg-green-50 border-green-200">
-                <CardContent className="p-8 text-center">
-                  <MessageCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-green-800 mb-4">
-                    Need Expert Help with Your Visa?
-                  </h3>
-                  <p className="text-green-700 mb-6">
-                    Our experienced team can guide you through every step of your visa application process. 
-                    Get personalized assistance and increase your chances of approval.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button className="bg-green-600 hover:bg-green-700" asChild>
-                      <Link href="/">Start Your Application</Link>
-                    </Button>
-                    <Button variant="outline" asChild>
-                      <Link href="/resources">Read More Guides</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* CTA Section with Contact Form */}
+              <BlogCTA />
             </article>
           </div>
         </div>

@@ -122,23 +122,66 @@ export default function VisaDetailPage() {
         }
         
         // Generate personalized message
-        const personalizedMessage = `Hi! I'm ${userName.trim()} and I'm interested in the ${visa?.visa_type} for ${visa?.country}. My phone number is ${userPhone.trim()}. ${messageTemplate.replace('{countryName}', visa?.country || '').replace('{visaType}', visa?.visa_type || '')}`
-        
-        // Open WhatsApp
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(personalizedMessage)}`
-        
+        let personalizedMessage = `Hi! I'm ${userName.trim()} and I'm interested in the ${visa?.visa_type} for ${visa?.country}. My phone number is ${userPhone.trim()}. ${messageTemplate.replace('{countryName}', visa?.country || '').replace('{visaType}', visa?.visa_type || '')}`
+
+        // Truncate message if too long (WhatsApp has URL length limits)
+        if (personalizedMessage.length > 1000) {
+          personalizedMessage = personalizedMessage.substring(0, 997) + '...'
+        }
+
+        // Clean WhatsApp number (remove any non-digits except +)
+        const cleanNumber = whatsappNumber.replace(/[^\d+]/g, '')
+
+        // Validate WhatsApp number
+        if (!cleanNumber || cleanNumber.length < 10) {
+          console.error('Invalid WhatsApp number:', whatsappNumber)
+          alert('WhatsApp configuration error. Please contact support.')
+          return
+        }
+
+        // Create WhatsApp URL - try both wa.me and api.whatsapp.com for better mobile compatibility
+        const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(personalizedMessage)}`
+        const whatsappApiUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(personalizedMessage)}`
+
         // Track existing analytics with enhanced parameters for better attribution
         trackContactConsultantClick(
-          visa?.country || '', 
-          visa?.visa_type || '', 
+          visa?.country || '',
+          visa?.visa_type || '',
           'whatsapp',
           visa?.price,
           result.leadId?.toString()
         )
         trackWhatsAppMessageSent(visa?.country || '', visa?.visa_type || '')
-        
-        // Open WhatsApp in new tab
-        window.open(whatsappUrl, '_blank')
+
+        // Debug information
+        console.log('WhatsApp redirect debug:', {
+          originalNumber: whatsappNumber,
+          cleanNumber,
+          whatsappUrl,
+          messageLength: personalizedMessage.length,
+          userAgent: navigator.userAgent
+        })
+
+        // Mobile-optimized WhatsApp redirect
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+        // Add small delay to ensure form submission is complete
+        setTimeout(() => {
+          if (isMobile) {
+            // For mobile devices, use direct location.href for better compatibility
+            console.log('Mobile detected - using location.href')
+            window.location.href = whatsappUrl
+          } else {
+            // For desktop, use window.open with fallback
+            console.log('Desktop detected - using window.open')
+            const newWindow = window.open(whatsappUrl, '_blank')
+            // If popup is blocked, fallback to location.href
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+              console.log('Popup blocked - fallback to location.href')
+              window.location.href = whatsappUrl
+            }
+          }
+        }, 100)
       } else {
         console.error('Error submitting contact info:', result.error)
         alert('There was an error. Please try again.')
