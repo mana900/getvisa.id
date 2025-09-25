@@ -124,10 +124,10 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
               {visasToShow.map((visa, index) => (
                 <div
                   key={visa.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer"
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col h-full"
                   onClick={() => handleCardClick(visa.country_code, visa.visa_type)}
                 >
-                  <div className="p-6 pb-4">
+                  <div className="p-6 pb-4 flex-1">
                     <div className="flex items-center space-x-3 mb-4">
                       <span className="text-3xl">{visa.flag}</span>
                       <div>
@@ -144,15 +144,15 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                     </div>
 
                     <p className="text-gray-600 text-xs leading-relaxed mb-4 line-clamp-3">
-                      {visa.overview?.description ? 
-                        visa.overview.description.length > 100 
+                      {visa.overview?.description ?
+                        visa.overview.description.length > 100
                           ? visa.overview.description.substring(0, 100).replace(/\s+\S*$/, '') + '...'
                           : visa.overview.description
                         : 'No description available'}
                     </p>
                   </div>
 
-                  <div className="px-6 pb-6 space-y-3">
+                  <div className="px-6 pb-4 space-y-3">
                     <div className="flex items-start justify-between text-sm">
                       <div className="flex items-center text-gray-600">
                         <Clock className="w-4 h-4 mr-2" />
@@ -198,8 +198,11 @@ export default function VisaOptions({ searchFilters }: VisaOptionsProps) {
                       </div>
                     )}
 
+                  </div>
+
+                  <div className="px-6 pb-6">
                     <button
-                      className="w-full mt-4 bg-black text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                      className="w-full bg-black text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleCardClick(visa.country_code, visa.visa_type)

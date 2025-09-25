@@ -162,10 +162,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
-      
+
       {/* Blog Analytics Tracking */}
       <BlogAnalytics slug={post.slug} category={post.category} title={post.title} />
-      
+
       {/* Structured Data */}
       <script
         type="application/ld+json"
@@ -173,7 +173,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       />
 
       {/* Hero Section */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-20" style={{ paddingTop: 'calc(5rem + 88px)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="max-w-4xl mx-auto">
             <Button variant="outline" className="mb-6" asChild>

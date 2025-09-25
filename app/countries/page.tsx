@@ -209,9 +209,9 @@ export default function CountriesPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <Navigation />
-      
+
       {/* Header Section */}
-      <section className="px-6 py-12 bg-white">
+      <section className="px-6 py-12 bg-white" style={{ paddingTop: 'calc(3rem + 88px)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">

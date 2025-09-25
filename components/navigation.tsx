@@ -11,6 +11,7 @@ export default function Navigation() {
   const { user, signOut } = useSupabaseAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   const toggleMobileMenu = () => {
     if (isMobileMenuOpen) {
@@ -24,6 +25,18 @@ export default function Navigation() {
     }
   }
 
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY
+      setIsScrolled(scrollTop > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Handle mobile menu overflow
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
@@ -38,7 +51,11 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="relative z-30 flex items-center justify-between p-6 bg-white">
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-6 bg-white transition-all duration-300 ${
+        isScrolled
+          ? 'shadow-md border-b border-gray-100'
+          : 'shadow-none'
+      }`}>
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center">
             <Image

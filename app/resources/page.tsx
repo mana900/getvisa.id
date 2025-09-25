@@ -116,9 +116,9 @@ export default function ResourcesPage() {
   return (
     <main className="min-h-screen bg-white">
       <Navigation />
-      
+
       {/* Main Content */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-20" style={{ paddingTop: 'calc(5rem + 88px)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="mb-16">
             <h1 className="text-4xl md:text-5xl text-gray-900 leading-tight mb-6">

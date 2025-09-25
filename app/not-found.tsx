@@ -49,9 +49,9 @@ export default function NotFound() {
   return (
     <>
       <Navigation />
-      
+
       <main className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-        <div className="px-6 py-20">
+        <div className="px-6 py-20" style={{ paddingTop: 'calc(5rem + 88px)' }}>
           <div className="max-w-4xl mx-auto text-center">
             {/* 404 Hero Section */}
             <div className="mb-16">

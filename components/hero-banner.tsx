@@ -60,7 +60,7 @@ export default function HeroBanner({ onSearchChange }: HeroBannerProps) {
   }
 
   return (
-    <div className="relative rounded-3xl mx-4 md:mx-6 mb-6 overflow-hidden">
+    <div className="relative rounded-3xl mx-4 md:mx-6 mb-6 mt-24 md:mt-20 overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-hero-canyon"></div>
       <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
       <div className="relative z-10 px-4 md:px-12 py-16 md:py-32 text-center text-white">
