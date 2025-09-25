@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+    shortcut: '/favicon.png',
+  },
   openGraph: {
     title: 'GetVisa.ID - Professional Visa Services for Indonesians',
     description: 'Fast, reliable visa services for 100+ destinations. Expert visa processing, document guidance, and embassy support.',
