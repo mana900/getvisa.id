@@ -288,10 +288,10 @@ export default function CountriesPage() {
                 <div className="px-2">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xl font-bold text-gray-900">{country.country}</h3>
-                    <div className="flex items-center gap-1">
+                    {/* <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                       <span className="text-sm text-gray-600">4.5</span>
-                    </div>
+                    </div> */}
                   </div>
                   
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">
