@@ -25,10 +25,16 @@ export const useCountries = (): UseCountriesReturn => {
     try {
       setLoading(true)
       setError(null)
-      const data = await VisaService.getCountriesWithVisas()
-      // Only show countries with active visas
-      const activeCountries = data.filter(country => country.activeCount > 0)
-      setCountries(activeCountries)
+
+      // Use the public API endpoint instead of the admin endpoint
+      const response = await fetch('/api/countries')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch countries')
+      }
+
+      const data = await response.json()
+      setCountries(data.countries || [])
     } catch (err) {
       console.error('Error fetching countries:', err)
       setError('Failed to load countries')

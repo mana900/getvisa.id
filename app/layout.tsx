@@ -15,9 +15,12 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
-    shortcut: '/favicon.png',
+    icon: [
+      { url: '/TextLogo-GreenCropped2.png?v=1', sizes: '16x16', type: 'image/png' },
+      { url: '/TextLogo-GreenCropped2.png?v=1', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: { url: '/TextLogo-GreenCropped2.png?v=1', sizes: '180x180', type: 'image/png' },
+    shortcut: '/TextLogo-GreenCropped2.png?v=1',
   },
   openGraph: {
     title: 'GetVisa.ID - Professional Visa Services for Indonesians',
