@@ -1,0 +1,98 @@
+{
+    "version": "7.2",
+    "screens": [
+        {
+            "id": "VISA_APPLICATION_FORM",
+            "title": "Visa Application",
+            "data": {},
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "TextHeading",
+                        "text": "Apply for Visa"
+                    },
+                    {
+                        "type": "TextBody",
+                        "text": "Let us know where you're looking to travel and we'll get back to you soon with visa options and pricing."
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "name",
+                        "label": "Your Full Name",
+                        "required": true,
+                        "input-type": "text"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "destination",
+                        "label": "Where would you like to travel to?",
+                        "helper-text": "e.g., United States, Japan, South Korea",
+                        "required": true,
+                        "input-type": "text"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "travelers",
+                        "label": "How many people?",
+                        "helper-text": "Number of travelers applying for visa",
+                        "required": true,
+                        "input-type": "number"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "email",
+                        "label": "Email Address (Optional)",
+                        "required": false,
+                        "input-type": "email"
+                    },
+                    {
+                        "type": "Footer",
+                        "label": "Submit Application",
+                        "on-click-action": {
+                            "name": "complete",
+                            "payload": {
+                                "name": "${form.name}",
+                                "destination": "${form.destination}",
+                                "travelers": "${form.travelers}",
+                                "email": "${form.email}"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "SUCCESS_SCREEN",
+            "title": "Application Received",
+            "terminal": true,
+            "success": true,
+            "data": {},
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "TextHeading",
+                        "text": "Thank You! ✅"
+                    },
+                    {
+                        "type": "TextBody",
+                        "text": "We've received your visa application request. Our team will review your information and get back to you shortly with visa options and next steps."
+                    },
+                    {
+                        "type": "TextCaption",
+                        "text": "You'll receive a message from us soon with more details."
+                    },
+                    {
+                        "type": "Footer",
+                        "label": "Done",
+                        "on-click-action": {
+                            "name": "complete",
+                            "payload": {}
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

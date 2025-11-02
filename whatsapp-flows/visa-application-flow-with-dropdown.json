@@ -1,0 +1,129 @@
+{
+    "version": "7.2",
+    "screens": [
+        {
+            "id": "VISA_APPLICATION_FORM",
+            "title": "Visa Application",
+            "data": {
+                "countries": [
+                    {"id": "australia", "title": "Australia 🇦🇺"},
+                    {"id": "canada", "title": "Canada 🇨🇦"},
+                    {"id": "china", "title": "China 🇨🇳"},
+                    {"id": "france", "title": "France 🇫🇷"},
+                    {"id": "germany", "title": "Germany 🇩🇪"},
+                    {"id": "india", "title": "India 🇮🇳"},
+                    {"id": "indonesia", "title": "Indonesia 🇮🇩"},
+                    {"id": "italy", "title": "Italy 🇮🇹"},
+                    {"id": "japan", "title": "Japan 🇯🇵"},
+                    {"id": "kenya", "title": "Kenya 🇰🇪"},
+                    {"id": "netherlands", "title": "Netherlands 🇳🇱"},
+                    {"id": "portugal", "title": "Portugal 🇵🇹"},
+                    {"id": "south-korea", "title": "South Korea 🇰🇷"},
+                    {"id": "spain", "title": "Spain 🇪🇸"},
+                    {"id": "switzerland", "title": "Switzerland 🇨🇭"},
+                    {"id": "turkey", "title": "Turkey 🇹🇷"},
+                    {"id": "uae", "title": "United Arab Emirates 🇦🇪"},
+                    {"id": "uk", "title": "United Kingdom 🇬🇧"},
+                    {"id": "usa", "title": "United States 🇺🇸"},
+                    {"id": "vietnam", "title": "Vietnam 🇻🇳"},
+                    {"id": "other", "title": "Other Country"}
+                ]
+            },
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "TextHeading",
+                        "text": "Apply for Visa"
+                    },
+                    {
+                        "type": "TextBody",
+                        "text": "Let us know where you're looking to travel and we'll get back to you soon with visa options and pricing."
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "name",
+                        "label": "Your Full Name",
+                        "required": true,
+                        "input-type": "text"
+                    },
+                    {
+                        "type": "Dropdown",
+                        "name": "destination",
+                        "label": "Where would you like to travel to?",
+                        "required": true,
+                        "data-source": "${data.countries}"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "travelers",
+                        "label": "How many people?",
+                        "helper-text": "Number of travelers",
+                        "required": true,
+                        "input-type": "number"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "email",
+                        "label": "Email Address (Optional)",
+                        "required": false,
+                        "input-type": "email"
+                    },
+                    {
+                        "type": "TextInput",
+                        "name": "phone",
+                        "label": "Phone Number (Optional)",
+                        "required": false,
+                        "input-type": "phone"
+                    },
+                    {
+                        "type": "Footer",
+                        "label": "Submit Application",
+                        "on-click-action": {
+                            "name": "complete",
+                            "payload": {
+                                "name": "${form.name}",
+                                "destination": "${form.destination}",
+                                "travelers": "${form.travelers}",
+                                "email": "${form.email}",
+                                "phone": "${form.phone}"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "SUCCESS_SCREEN",
+            "title": "Application Received",
+            "terminal": true,
+            "success": true,
+            "data": {},
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "TextHeading",
+                        "text": "Thank You! ✅"
+                    },
+                    {
+                        "type": "TextBody",
+                        "text": "We've received your visa application request. Our team will review your information and get back to you shortly with visa options and next steps."
+                    },
+                    {
+                        "type": "TextCaption",
+                        "text": "You'll receive a message from us soon with more details."
+                    },
+                    {
+                        "type": "Footer",
+                        "label": "Done",
+                        "on-click-action": {
+                            "name": "complete",
+                            "payload": {}
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
