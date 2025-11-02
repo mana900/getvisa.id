@@ -161,6 +161,8 @@ function getDifficultyColor(difficulty: string) {
 
 export default function CountriesPage() {
   const [countries, setCountries] = useState<any[]>([])
+  const [filteredCountries, setFilteredCountries] = useState<any[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -170,12 +172,14 @@ export default function CountriesPage() {
         if (response.ok) {
           const data = await response.json()
           setCountries(data.countries)
+          setFilteredCountries(data.countries)
         } else {
           console.error('Failed to fetch countries from database, falling back to service')
           // Fallback to existing service
           const countriesData = await VisaService.getCountriesWithVisas()
           const activeCountries = countriesData.filter(country => country.activeCount > 0)
           setCountries(activeCountries)
+          setFilteredCountries(activeCountries)
         }
       } catch (error) {
         console.error('Error fetching countries:', error)
@@ -184,6 +188,7 @@ export default function CountriesPage() {
           const countriesData = await VisaService.getCountriesWithVisas()
           const activeCountries = countriesData.filter(country => country.activeCount > 0)
           setCountries(activeCountries)
+          setFilteredCountries(activeCountries)
         } catch (fallbackError) {
           console.error('Fallback also failed:', fallbackError)
         }
@@ -194,6 +199,23 @@ export default function CountriesPage() {
 
     fetchCountries()
   }, [])
+
+  // Filter countries based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredCountries(countries)
+      return
+    }
+
+    const query = searchQuery.toLowerCase()
+    const filtered = countries.filter(country =>
+      country.country.toLowerCase().includes(query) ||
+      country.countryCode.toLowerCase().includes(query) ||
+      country.region?.toLowerCase().includes(query) ||
+      country.description?.toLowerCase().includes(query)
+    )
+    setFilteredCountries(filtered)
+  }, [searchQuery, countries])
 
   if (loading) {
     return (
@@ -218,34 +240,46 @@ export default function CountriesPage() {
               Visa Information by Country
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Explore visa requirements, processing times, and fees for destinations worldwide. 
+              Explore visa requirements, processing times, and fees for destinations worldwide.
               Get expert guidance for your next international journey.
             </p>
           </div>
-          
-          {/* Filter/Search Bar
+
+          {/* Search Bar */}
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
-            <div className="relative">
+            <div className="relative w-full md:w-96">
               <input
                 type="text"
                 placeholder="Search countries..."
-                className="w-full md:w-80 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-3 pl-10 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
-            <select className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>All Regions</option>
-              <option>North America</option>
-              <option>Europe</option>
-              <option>Asia</option>
-              <option>Oceania</option>
-            </select>
-            <select className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>All Difficulties</option>
-              <option>Easy</option>
-              <option>Medium</option>
-              <option>Hard</option>
-            </select>
-          </div> */}
+            {searchQuery && (
+              <div className="text-sm text-gray-600 flex items-center justify-center">
+                Found {filteredCountries.length} {filteredCountries.length === 1 ? 'country' : 'countries'}
+              </div>
+            )}
+          </div>
 
 
         </div>
@@ -254,8 +288,19 @@ export default function CountriesPage() {
       {/* Countries Grid */}
       <section className="px-6 pb-20">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {countries.map((country, index) => (
+          {filteredCountries.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No countries found matching "{searchQuery}"</p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="mt-4 text-blue-600 hover:text-blue-700 underline"
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCountries.map((country, index) => (
               <Link 
                 key={country.countryCode}
                 href={`/visa/${country.countryCode}`}
@@ -334,8 +379,9 @@ export default function CountriesPage() {
 
                 </div>
               </Link>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

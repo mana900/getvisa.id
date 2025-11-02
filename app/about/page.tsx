@@ -152,9 +152,9 @@ That's why we created GetVisa.id
                     </svg>
                   </div>
                   <div className="text-center md:text-left">
-                    <h3 className="text-base md:text-lg lg:text-xl text-gray-900 mb-1 md:mb-2">Trusted Expertise</h3>
+                    <h3 className="text-base md:text-lg lg:text-xl text-gray-900 mb-1 md:mb-2">Full-Refund Guarantee</h3>
                     <p className="text-gray-600 leading-relaxed text-xs md:text-sm lg:text-base">
-                      With years of travel industry experience, we know what embassies look for.
+                      If your visa gets rejected, we'll refund you in full—because your trust matters.
                     </p>
                   </div>
                 </div>
