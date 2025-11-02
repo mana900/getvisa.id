@@ -50,7 +50,11 @@
                         "type": "Footer",
                         "label": "Submit Application",
                         "on-click-action": {
-                            "name": "complete",
+                            "name": "navigate",
+                            "next": {
+                                "type": "screen",
+                                "name": "SUCCESS_SCREEN"
+                            },
                             "payload": {
                                 "name": "${form.name}",
                                 "destination": "${form.destination}",
@@ -66,7 +70,6 @@
             "id": "SUCCESS_SCREEN",
             "title": "Application Received",
             "terminal": true,
-            "success": true,
             "data": {},
             "layout": {
                 "type": "SingleColumnLayout",
